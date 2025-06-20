@@ -1,0 +1,220 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @default(uuid())
+  fullName        String
+  email           String
+  profilePic      String
+  password        String
+  role            UserRole        @default(Student)
+  isEmailVerified Boolean
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  student         Student?        @relation("StudentProfile")
+  instructor      Instructor?     @relation("InstructorProfile")
+  admin           Admin?          @relation("AdminProfile")
+  userPreference  UserPreference?
+  notifications   Notification[]
+
+  // certificates Certificate
+  @@index([email, role, password])
+}
+
+model Student {
+  id              String          @id @default(uuid())
+  user            User            @relation("StudentProfile", fields: [userId], references: [id])
+  enrolledCourses StudentCourse[]
+  wishList        Course[]
+
+  progress       Float
+  userId         String           @unique
+  PaymentHistory PaymentHistory[]
+  quizScores     QuizAttempt[]
+}
+
+model Instructor {
+  id         String @id @default(uuid())
+  user       User   @relation("InstructorProfile", fields: [userId], references: [id])
+  bio        String
+  experience String
+  education  String
+
+  myCourses Course[]
+  userId    String   @unique
+}
+
+model Admin {
+  id          String   @id @default(uuid())
+  user        User     @relation("AdminProfile", fields: [userId], references: [id])
+  permissions String[]
+  userId      String   @unique
+}
+
+model UserPreference {
+  id            String  @id @default(uuid())
+  user          User    @relation(fields: [userId], references: [id])
+  userId        String  @unique
+  darkMode      Boolean @default(false)
+  language      String  @default("en")
+  notifications Boolean @default(true)
+}
+
+model Course {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  rating      Float
+  thumbnail   String
+  price       Decimal
+  tags        String[]
+  duration    Int
+  modules     Module[]
+  level       CourseLevel
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  enrolledUsers  StudentCourse[]
+  wishlistedBy   Student[]
+  instructor     Instructor       @relation(fields: [instructorId], references: [id])
+  instructorId   String
+  paymentHistory PaymentHistory[]
+
+  @@index([rating, level, price, title, duration])
+}
+
+model Module {
+  id       String   @id @default(uuid())
+  title    String
+  course   Course   @relation(fields: [courseId], references: [id])
+  courseId String
+  lessons  Lesson[]
+  order    Int
+  quizzes  Quiz[]
+}
+
+model Lesson {
+  id       String    @id @default(uuid())
+  title    String
+  module   Module    @relation(fields: [moduleId], references: [id])
+  moduleId String
+  order    Int
+  chapters Chapter[]
+}
+
+model Chapter {
+  id       String @id @default(uuid())
+  title    String
+  content  Json // could contain video URL, markdown, etc.
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId String
+  order    Int
+}
+
+model Quiz {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  questions   Json[] // Easier to manage with Json and more flexible
+  duration    Int // In minutes
+  order       Int // Used to know which lesson or quiz comes first
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // isPublished Boolean  @default(false)
+
+  module       Module        @relation(fields: [moduleId], references: [id])
+  moduleId     String
+  quizAttempts QuizAttempt[]
+}
+
+model QuizAttempt {
+  id          String   @id @default(uuid())
+  score       Float?
+  answers     Json // Made Json for flexibility
+  completedAt DateTime @default(now())
+
+  student   Student @relation(fields: [studentId], references: [id])
+  quiz      Quiz    @relation(fields: [quizId], references: [id])
+  studentId String
+  quizId    String
+}
+
+model StudentCourse {
+  id             String   @id @default(uuid())
+  student        Student  @relation(fields: [studentId], references: [id])
+  course         Course   @relation(fields: [courseId], references: [id])
+  progress       Float    @default(0)
+  notes          Json? // Made json for convenience could be changed
+  lastCheckpoint Json? // Made json for convenience could be changed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  courseId      String
+  studentId     String
+  certificate   Certificate?
+  certificateId String?      @unique
+
+  @@unique([courseId, studentId])
+  @@index([studentId])
+}
+
+model PaymentHistory {
+  id            String        @id @default(uuid())
+  paidAt        DateTime      @default(now())
+  paymentMethod PaymentMethod
+  couponCode    String?
+
+  student   Student @relation(fields: [studentId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id])
+  studentId String
+  courseId  String
+}
+
+model Certificate {
+  id       String   @id @default(uuid())
+  issuedAt DateTime @default(now())
+  fileUrl  String
+
+  studentCourse   StudentCourse @relation(fields: [studentCourseId], references: [id])
+  studentCourseId String        @unique
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum UserRole {
+  Admin
+  Student
+  Instructor
+}
+
+enum PaymentMethod {
+  CBE
+  TeleBirr
+  Stripe
+}
+
+enum CourseLevel {
+  Beginner
+  Intermediate
+  Advanced
+}
