@@ -1,16 +1,23 @@
+// app/page.js
+
 import React from "react";
 import Header from "./_components/Header";
 import Hero from "./_components/Hero";
-// import Footer from "./_components/Footer"; // Uncomment when Footer is ready
+import CoursesSection from "./_components/CoursesSection";
+import CtaSection from "./_components/CtaSection";
+import OurInstructors from "./_components/OurInstructors"; // Import the new component
+// import Footer from "./_components/Footer";
 
 
 export default function Home() {
   return (
-
-    <div className="min-h-screen flex flex-col"> 
+    <div className="min-h-screen flex flex-col">
       <Header/>
-      <main className="flex-grow"> 
+      <main className="flex-grow">
         <Hero/>
+        <CoursesSection />
+        <CtaSection />
+        {/* <OurInstructors/> */}
 
       </main>
       {/* <Footer/> */}
