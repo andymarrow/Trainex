@@ -14,23 +14,30 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(uuid())
-  fullName        String
-  email           String
-  profilePic      String
-  password        String
-  role            UserRole        @default(Student)
-  isEmailVerified Boolean
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  student         Student?        @relation("StudentProfile")
-  instructor      Instructor?     @relation("InstructorProfile")
-  admin           Admin?          @relation("AdminProfile")
-  userPreference  UserPreference?
-  notifications   Notification[]
-
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  role           UserRole        @default(student)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  student        Student?        @relation("StudentProfile")
+  instructor     Instructor?     @relation("InstructorProfile")
+  admin          Admin?          @relation("AdminProfile")
+  userPreference UserPreference?
+  notifications  Notification[]
   // certificates Certificate
-  @@index([email, role, password])
+
+  //Better auth generated fields
+  emailVerified Boolean
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+
+  @@index([email, role, banned, emailVerified])
+  @@map("user")
 }
 
 model Student {
@@ -201,9 +208,9 @@ model Notification {
 }
 
 enum UserRole {
-  Admin
-  Student
-  Instructor
+  admin
+  student
+  instructor
 }
 
 enum PaymentMethod {
@@ -216,4 +223,51 @@ enum CourseLevel {
   Beginner
   Intermediate
   Advanced
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
