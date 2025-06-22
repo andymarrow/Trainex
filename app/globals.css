@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'swiper/css';
+@import 'swiper/css/navigation'; 
+@import 'swiper/css/pagination';
+@import 'swiper/css/autoplay';   
+
+
+
 :root {
   --foreground-rgb: 0, 0, 0;
  }
@@ -108,4 +115,87 @@
 }
 .animate-pulse-slow {
   animation: pulse-slow 8s infinite ease-in-out;
+}
+
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; 
+}
+
+
+
+.swiper-instructors-container .swiper-button-next,
+.swiper-instructors-container .swiper-button-prev {
+  color: #3b82f6; /* blue-500 */
+  fill: #3b82f6;
+  top: 50%; /* Ensure centered vertically */
+  transform: translateY(-50%);
+  z-index: 10; /* Make sure arrows are above cards */
+}
+
+.dark .swiper-instructors-container .swiper-button-next,
+.dark .swiper-instructors-container .swiper-button-prev {
+   color: #22d3ee; /* cyan-400 */
+   fill: #22d3ee;
+}
+
+/* Adjust arrow position if they are too close to the edge */
+.swiper-instructors-container .swiper-button-prev {
+    left: 0px; /* Adjust as needed, e.g., 10px, 20px */
+}
+
+.swiper-instructors-container .swiper-button-next {
+    right: 0px; /* Adjust as needed, e.g., 10px, 20px */
+}
+
+
+/* Style pagination dots */
+.swiper-instructors-container .swiper-pagination-bullet {
+  background: #9ca3af; /* gray-400 */
+  opacity: 0.8;
+}
+
+.swiper-instructors-container .swiper-pagination-bullet-active {
+  background: #3b82f6; /* blue-500 */
+  opacity: 1;
+}
+
+.dark .swiper-instructors-container .swiper-pagination-bullet {
+   background: #6b7280; /* gray-500 */
+}
+
+.dark .swiper-instructors-container .swiper-pagination-bullet-active {
+  background: #22d3ee; /* cyan-400 */
+}
+
+/* Ensure focus states are visible but don't cause layout shifts */
+.swiper-button-next:focus,
+.swiper-button-prev:focus,
+.swiper-pagination-bullet:focus {
+    outline: none;
+    /* Add a subtle ring or different visual cue if needed */
+    /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); */
+}
+
+
+/* Hide the default scrollbar if Swiper's container gets one (usually doesn't need this) */
+.swiper-instructors-container {
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Edge, Safari */
+.swiper-instructors-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure the main Swiper container doesn't get weird widths */
+/* This might be needed if a parent flex/grid container is causing issues */
+.swiper.mySwiper {
+  width: 100%; /* Make the Swiper instance fill its container */
+  height: auto; /* Let height be determined by content */
 }
