@@ -10,6 +10,8 @@ import OurInstructors from "./_components/OurInstructors"; // Import the new com
 import Aboutus from "./_components/Aboutus";
 import LatestBlogs from "./_components/LatestBlogs";
 import Contactus from "./_components/Contactus";
+import Partners from "./_components/Partners";
+import Footer from "./_components/Footer";
 // import Footer from "./_components/Footer";
 
 
@@ -27,9 +29,10 @@ export default function Home() {
         {/* the testimonials section is messing up with the responsivness some how i dont know why  */}
         <LatestBlogs/>
         <Contactus/>
+        <Partners/>
 
       </main>
-      {/* <Footer/> */}
+      <Footer/>
     </div>
   );
 }
