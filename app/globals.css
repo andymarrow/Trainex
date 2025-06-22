@@ -126,34 +126,19 @@
   display: none; 
 }
 
-
-
 .swiper-instructors-container .swiper-button-next,
 .swiper-instructors-container .swiper-button-prev {
   color: #3b82f6; /* blue-500 */
-  fill: #3b82f6;
-  top: 50%; /* Ensure centered vertically */
-  transform: translateY(-50%);
-  z-index: 10; /* Make sure arrows are above cards */
+  fill: #3b82f6; /* blue-500 */
 }
 
 .dark .swiper-instructors-container .swiper-button-next,
 .dark .swiper-instructors-container .swiper-button-prev {
    color: #22d3ee; /* cyan-400 */
-   fill: #22d3ee;
+   fill: #22d3ee; /* cyan-400 */
 }
 
-/* Adjust arrow position if they are too close to the edge */
-.swiper-instructors-container .swiper-button-prev {
-    left: 0px; /* Adjust as needed, e.g., 10px, 20px */
-}
-
-.swiper-instructors-container .swiper-button-next {
-    right: 0px; /* Adjust as needed, e.g., 10px, 20px */
-}
-
-
-/* Style pagination dots */
+/* Example: Style pagination dots */
 .swiper-instructors-container .swiper-pagination-bullet {
   background: #9ca3af; /* gray-400 */
   opacity: 0.8;
@@ -172,17 +157,15 @@
   background: #22d3ee; /* cyan-400 */
 }
 
-/* Ensure focus states are visible but don't cause layout shifts */
+/* Hide default outline on Swiper buttons */
 .swiper-button-next:focus,
 .swiper-button-prev:focus,
 .swiper-pagination-bullet:focus {
     outline: none;
-    /* Add a subtle ring or different visual cue if needed */
-    /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); */
 }
 
 
-/* Hide the default scrollbar if Swiper's container gets one (usually doesn't need this) */
+/* Optional: Hide default scrollbar if you want a cleaner look (Swiper handles scrolling) */
 .swiper-instructors-container {
   /* Firefox */
   scrollbar-width: none;
@@ -191,11 +174,4 @@
 /* Hide scrollbar for Chrome, Edge, Safari */
 .swiper-instructors-container::-webkit-scrollbar {
   display: none;
-}
-
-/* Ensure the main Swiper container doesn't get weird widths */
-/* This might be needed if a parent flex/grid container is causing issues */
-.swiper.mySwiper {
-  width: 100%; /* Make the Swiper instance fill its container */
-  height: auto; /* Let height be determined by content */
 }
