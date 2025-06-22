@@ -1,55 +1,86 @@
-import { getSession } from "@/lib/auth"
-import { addToWishList, enrollStudent, getEnrolledCourses, getPaymentHistory, getWishList } from "@/services/student.services"
-import { headers } from "next/headers"
-import { NextResponse } from "next/server"
-
-//TODO: Add http-errors library for more customized error messages to the frontend
+import { getSession } from "@/lib/auth";
+import { isStudent } from "@/lib/check-permission-server";
+import {
+	addToWishList,
+	enrollStudent,
+	getEnrolledCourses,
+	getPaymentHistory,
+	getWishList,
+} from "@/services/student.services";
+import createHttpError from "http-errors";
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
 
 export const getWishListController = async (request) => {
-    const { user } = getSession(headers());
+	const { user } = getSession(headers());
 
-    const wishList = await getWishList(user.id);
-    
-    return NextResponse.json({wishList});
-}
+	if (!isStudent(user)) {
+		throw new createHttpError.Unauthorized();
+	}
+
+	const wishList = await getWishList(user.id);
+
+	return NextResponse.json({ wishList });
+};
 
 // Could be wrong check before applying
 export const addToWishListController = async (request) => {
-    const { user } = getSession(headers());
-    const { courseId } = request.body;
+	const { user } = getSession(headers());
 
-    const wishList = await addToWishList({userId: user.id, courseId});
-    
-    return NextResponse.json({wishList});
-}
+	if (!isStudent(user)) {
+		throw new createHttpError.Unauthorized();
+	}
+
+	const { courseId } = request.body;
+
+	if (!courseId) {
+		throw new createHttpError.BadRequest("Invalid course id");
+	}
+
+	const wishList = await addToWishList({ userId: user.id, courseId });
+
+	return NextResponse.json({ wishList });
+};
 
 export const getEnrolledCoursesController = async (request) => {
-    const { user } = await auth.api.getSession({
-        headers: headers()
-    })
-    const courses = await getEnrolledCourses(user.id)
+	const { user } = await auth.api.getSession({
+		headers: headers(),
+	});
 
-    return NextResponse.json({courses})
-}
+	if (!isStudent(user)) {
+		throw new createHttpError.Unauthorized();
+	}
+
+	const courses = await getEnrolledCourses(user.id);
+
+	return NextResponse.json({ courses });
+};
 
 export const getPaymentHistoryController = async (request) => {
-    const { user } = await auth.api.getSession({
-        headers: headers()
-    })
+	const { user } = await auth.api.getSession({
+		headers: headers(),
+	});
 
-    const paymentHistory = await getPaymentHistory(user.id);
+	const paymentHistory = await getPaymentHistory(user.id);
 
-    return NextResponse.json({paymentHistory})
-}
+	return NextResponse.json({ paymentHistory });
+};
 
-export const enrollStudentController = async (request) => {
-    const { user } = await auth.api.getSession({
-        headers: headers()
-    })
+export const enrollStudentController = async (request, { params }) => {
+	const { user } = await auth.api.getSession({
+		headers: headers(),
+	});
+	const { courseId } = params;
 
-    const { courseId } = request.body;
+	if (!isStudent(user)) {
+		throw new createHttpError.Unauthorized();
+	}
 
-    const enrolledCourse = await enrollStudent({userId:user.id, courseId});
+	if (!courseId) {
+		throw new createHttpError.BadRequest("Invalid course id");
+	}
 
-    return NextResponse.json({enrolledCourse})
-}
+	const enrolledCourse = await enrollStudent({ userId: user.id, courseId });
+
+	return NextResponse.json({ enrolledCourse });
+};
