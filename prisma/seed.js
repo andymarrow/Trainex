@@ -1,187 +1,144 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
-	// Hash password helper
-	const hash = (password) => bcrypt.hashSync(password, 10);
-
-	// Create Admin
-	const adminUser = await prisma.user.create({
-		data: {
-			fullName: "Admin One",
-			email: "admin@example.com",
-			profilePic: "https://example.com/admin.jpg",
-			password: hash("adminpass"),
-			role: "Admin",
-			isEmailVerified: true,
-			admin: {
-				create: {
-					permissions: ["MANAGE_USERS", "VIEW_REPORTS"],
-				},
-			},
-			userPreference: {
-				create: {
-					darkMode: true,
-					language: "en",
-					notifications: true,
-				},
-			},
-		},
-	});
-
-	// Create Instructor
 	const instructorUser = await prisma.user.create({
 		data: {
-			fullName: "Instructor One",
-			email: "instructor@example.com",
-			profilePic: "https://example.com/instructor.jpg",
-			password: hash("instructorpass"),
-			role: "Instructor",
-			isEmailVerified: true,
+			id: "instructor-123",
+			name: "Jane Instructor",
+			email: "jane@instructor.com",
+			role: "instructor",
+			emailVerified: true,
 			instructor: {
 				create: {
-					bio: "Expert in Web Development",
-					experience: "5 years",
+					bio: "Experienced instructor in computer science",
 					education: "MSc in Computer Science",
+					experience: "10 years of teaching",
 				},
 			},
 		},
 	});
 
-	// Create Student
 	const studentUser = await prisma.user.create({
 		data: {
-			fullName: "Student One",
-			email: "student@example.com",
-			profilePic: "https://example.com/student.jpg",
-			password: hash("studentpass"),
-			role: "Student",
-			isEmailVerified: true,
+			name: "John Student",
+			email: "john@student.com",
+			role: "student",
+			emailVerified: true,
 			student: {
 				create: {
-					progress: 0,
+					progress: 0.3,
 				},
 			},
 		},
 	});
 
-	// Create Course with Module, Lesson, Chapter, Quiz
 	const course = await prisma.course.create({
 		data: {
-			title: "Intro to Full Stack Development",
-			description: "Learn frontend and backend development.",
-			rating: 4.8,
-			thumbnail: "https://example.com/course.jpg",
+			title: "Intro to Programming",
+			description: "A beginner-friendly course",
+			rating: 4.5,
+			thumbnail: "https://example.com/image.png",
 			price: 49.99,
-			tags: ["JavaScript", "React", "Node.js"],
-			duration: 720,
+			tags: ["beginner", "programming"],
+			duration: 120,
 			level: "Beginner",
-			instructorId: instructorUser.instructor.id,
-			modules: {
-				create: [
-					{
-						title: "Getting Started",
-						order: 1,
-						lessons: {
-							create: [
-								{
-									title: "What is Full Stack?",
-									order: 1,
-									chapters: {
-										create: [
-											{
-												title: "Overview",
-												order: 1,
-												content: {
-													text: "Full stack means frontend + backend.",
-													video: "https://video.example.com/overview",
-												},
-											},
-										],
-									},
-								},
-							],
-						},
-						quizzes: {
-							create: [
-								{
-									title: "Quiz 1: Basics",
-									duration: 10,
-									order: 2,
-									questions: [
-										{
-											question:
-												"What does HTML stand for?",
-											choices: [
-												"HyperText Markup Language",
-												"HighText Machine Language",
-												"None",
-											],
-											correct: 0,
-										},
-									],
-								},
-							],
-						},
-					},
-				],
+			instructorId: instructorUser.instructor.id || "instructor-123",
+		},
+	});
+
+	const module = await prisma.module.create({
+		data: {
+			title: "Basics",
+			order: 1,
+			courseId: course.id,
+		},
+	});
+
+	const lesson = await prisma.lesson.create({
+		data: {
+			title: "Getting Started",
+			order: 1,
+			moduleId: module.id,
+		},
+	});
+
+	await prisma.chapter.create({
+		data: {
+			title: "Setup Environment",
+			order: 1,
+			lessonId: lesson.id,
+			content: {
+				type: "video",
+				url: "https://example.com/setup.mp4",
 			},
 		},
 	});
 
-	// Get student and enroll in course
-	const student = await prisma.student.findUnique({
-		where: { userId: studentUser.id },
-	});
-
-	const studentCourse = await prisma.studentCourse.create({
+	const quiz = await prisma.quiz.create({
 		data: {
-			studentId: student.id,
-			courseId: course.id,
-			progress: 100,
+			title: "Basics Quiz",
+			questions: [
+				{
+					q: "What is a variable?",
+					a: "A storage location",
+				},
+			],
+			duration: 10,
+			order: 1,
+			moduleId: module.id,
 		},
 	});
 
-	const quiz = await prisma.quiz.findFirst({
-		where: { module: { courseId: course.id } },
+	const student = await prisma.student.findUniqueOrThrow({
+		where: {
+			userId: studentUser.id,
+		},
 	});
 
-	// Create quiz attempt
 	await prisma.quizAttempt.create({
 		data: {
 			studentId: student.id,
 			quizId: quiz.id,
-			score: 100,
+			score: 90,
 			answers: {
-				answerList: ["HyperText Markup Language"],
+				q1: "A storage location",
 			},
 		},
 	});
 
-	// Create certificate
+	const enrollment = await prisma.studentCourse.create({
+		data: {
+			studentId: student.id,
+			courseId: course.id,
+			progress: 0.5,
+		},
+	});
+
 	await prisma.certificate.create({
 		data: {
-			fileUrl: "https://example.com/certificate.pdf",
-			studentCourseId: studentCourse.id,
+			studentCourseId: enrollment.id,
+			fileUrl: "https://example.com/cert.pdf",
 		},
 	});
 
-	// Notification
-	await prisma.notification.create({
+	await prisma.paymentHistory.create({
 		data: {
-			userId: studentUser.id,
-			message: "Your course certificate is ready!",
+			studentId: student.id,
+			courseId: course.id,
+			paymentMethod: "Stripe",
+			couponCode: "NEWSTUDENT10",
 		},
 	});
-
-	console.log("✅ Seed completed successfully!");
 }
 
 main()
-	.catch((e) => {
-		console.error("❌ Seed failed:", e);
-		process.exit(1);
+	.then(() => {
+		console.log("✅ Seeded successfully");
+		return prisma.$disconnect();
 	})
-	.finally(() => prisma.$disconnect());
+	.catch((e) => {
+		console.error("❌ Seeding failed:", e);
+		return prisma.$disconnect().finally(() => process.exit(1));
+	});

@@ -46,7 +46,6 @@ model Student {
   enrolledCourses StudentCourse[]
   wishList        Course[]
 
-  progress       Float
   userId         String           @unique
   PaymentHistory PaymentHistory[]
   quizScores     QuizAttempt[]

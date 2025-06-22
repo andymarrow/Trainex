@@ -18,11 +18,11 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-			'primary-blue-dark': '#03045E',
-			'secondary-blue': '#0077b6',
-			'accent-blue': '#00b4d8', 
-			'light-blue-100': '#90e0ef',
-			'light-blue-50': '#caf0f8',
+  			'primary-blue-dark': '#03045E',
+  			'secondary-blue': '#0077b6',
+  			'accent-blue': '#00b4d8',
+  			'light-blue-100': '#90e0ef',
+  			'light-blue-50': '#caf0f8',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
