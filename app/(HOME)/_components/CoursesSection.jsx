@@ -13,7 +13,7 @@ function CoursesSection() {
   const router = useRouter();
 
   const [hoveredCourse, setHoveredCourse] = useState(null);
-  // popupPosition will now store { top, left } relative to the section
+  // popupPosition will now store { top, left, transform } relative to the section
   const [popupPosition, setPopupPosition] = useState(null);
   const popupTimerRef = useRef(null);
 
@@ -52,20 +52,51 @@ function CoursesSection() {
     ? sampleCourses
     : sampleCourses.filter(course => course.category === selectedCategory);
 
-  // --- Hover Popup Logic (Using Absolute Positioning) ---
+  // --- Hover Popup Logic (Using Absolute Positioning & Smart Placement) ---
   const handleMouseEnterCard = (course, cardElement) => {
-    // Only show popup on large screens as per existing logic
-    if (!isLargeScreen) return;
+    // Only show popup on large screens
+    if (!isLargeScreen || !sectionRef.current) return; // Ensure sectionRef is available
 
     const rect = cardElement.getBoundingClientRect();
     // Get the position of the section relative to the viewport
-    const sectionRect = sectionRef.current ? sectionRef.current.getBoundingClientRect() : { top: 0, left: 0 };
+    const sectionRect = sectionRef.current.getBoundingClientRect();
 
-    // Calculate position relative to the section's top-left corner
-    // top: distance from top of section to top of card
-    // left: distance from left of section to right of card
-    const topRelativeToSection = rect.top - sectionRect.top;
-    const leftRelativeToSection = rect.right - sectionRect.left;
+    const popupWidth = 300; // Needs to match the width set in HoverPopup or its wrapper
+    const gap = 10; // Gap between card and popup
+
+    let topRelativeToSection = rect.top - sectionRect.top;
+    let leftRelativeToSection;
+    let transform = 'translateX(10px)'; // Default to position right with a gap
+
+    // Check available space to the right of the card relative to the *viewport*
+    // This is a simpler check than relative to the section if the section is not full width
+    // Let's use viewport width for the check to be more robust against different parent containers
+    const spaceRightOfCardInViewport = window.innerWidth - rect.right;
+
+
+    if (spaceRightOfCardInViewport >= popupWidth + gap) {
+      // Enough space on the right (relative to viewport), position to the right relative to section
+      leftRelativeToSection = rect.right - sectionRect.left;
+      transform = 'translateX(10px)';
+    } else {
+      // Not enough space on the right, position to the left
+      leftRelativeToSection = rect.left - sectionRect.left - popupWidth - gap;
+      transform = 'translateX(-10px)';
+
+      // Optional: Prevent popup from going off the left edge of the section
+      if (leftRelativeToSection < 0) {
+          leftRelativeToSection = 0; // Stick to the left edge of the section
+          transform = 'translateX(0)'; // No transform needed if against the edge
+      }
+    }
+
+     // Optional: Ensure popup doesn't go off the top edge of the section
+     if (topRelativeToSection < 0) {
+         topRelativeToSection = 0; // Stick to the top edge of the section
+     }
+     // Optional: Ensure popup doesn't go off the bottom edge of the section
+     // This is more complex as popup height is dynamic. A simple fix is to limit top or let it scroll.
+
 
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
@@ -73,10 +104,11 @@ function CoursesSection() {
 
     popupTimerRef.current = setTimeout(() => {
       setHoveredCourse(course);
-      // Store the calculated position relative to the section
-      setPopupPosition({ top: topRelativeToSection, left: leftRelativeToSection });
+      // Store the calculated position including the transform value
+      setPopupPosition({ top: topRelativeToSection, left: leftRelativeToSection, transform });
     }, 300); // Delay before showing popup
   };
+
 
   const handleMouseLeave = () => {
      // Only clear hover state if on a large screen
@@ -128,7 +160,7 @@ function CoursesSection() {
     if (popupTimerRef.current) {
         clearTimeout(popupTimerRef.current);
     }
-    router.push('/CourseList');
+    router.push('/courselist'); // Use lowercase 'courselist'
   };
 
   // Find the course data for the hovered course object
@@ -159,7 +191,7 @@ function CoursesSection() {
       if (popupTimerRef.current) {
           clearTimeout(popupTimerRef.current);
       }
-      router.push(`/CourseList/${courseId}`);
+      router.push(`/courselist/${courseId}`); // Use lowercase 'courselist'
   };
 
 
@@ -247,8 +279,8 @@ function CoursesSection() {
                  position: 'absolute', // Use absolute positioning relative to the parent section
                  top: `${popupPosition.top}px`, // Use top relative to section's top
                  left: `${popupPosition.left}px`, // Use left relative to section's left
-                 transform: 'translateX(10px)', // Add gap to the right of the card's edge
-                 zIndex: 50, // Ensure it's above other content
+                 transform: popupPosition.transform, // Apply the calculated transform
+                 zIndex: 50,
              }}
              onMouseEnter={handleMouseEnterPopup} // Pass hover events to keep popup open
              onMouseLeave={handleMouseLeavePopup}

@@ -1,4 +1,3 @@
-// app/courselist/page.js
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -6,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Import your components (Adjust paths if necessary)
-import CourseCard from '../_components/CourseCard' // Corrected path assuming /components at root
-import HoverPopup from '../_components/HoverPopup'// Corrected path assuming /components at root
+import CourseCard from '../_components/CourseCard'; // Corrected path assuming /components at root
+import HoverPopup from '../_components/HoverPopup'; // Corrected path assuming /components at root
 
 
 import { sampleCourses } from '@/lib/constants';
@@ -54,7 +53,8 @@ function CourseListPage() {
 
   // State for hover popup
   const [hoveredCourse, setHoveredCourse] = useState(null);
-  const [popupPosition, setPopupPosition] = useState(null); // Stores { top, left } relative to section
+  // popupPosition now stores { top, left, transform } relative to section
+  const [popupPosition, setPopupPosition] = useState(null);
   const popupTimerRef = useRef(null);
   const sectionRef = useRef(null); // Ref for the main section, needed for absolute positioning context
 
@@ -185,22 +185,51 @@ function CourseListPage() {
     if (popupTimerRef.current) {
         clearTimeout(popupTimerRef.current);
     }
-    router.push(`/CourseList/${courseId}`);
+    router.push(`/CourseList/${courseId}`); // Using lowercase 'CourseList'
   };
   // --- End Navigation Handler ---
 
 
-  // --- Hover Popup Logic (Simplified Positioning) ---
+  // --- Hover Popup Logic (Adjusted Positioning) ---
   const handleMouseEnterCard = (course, cardElement) => {
     if (!isLargeScreen) return; // Only show popup on large screens
 
     const rect = cardElement.getBoundingClientRect();
     const sectionRect = sectionRef.current ? sectionRef.current.getBoundingClientRect() : { top: 0, left: 0 }; // Get section position
 
-    // Calculate position relative to the section's top-left corner
-    // This is needed for absolute positioning within the section
-    const topRelativeToSection = rect.top - sectionRect.top;
-    const leftRelativeToSection = rect.right - sectionRect.left;
+    const popupWidth = 300; // Needs to match the width set in HoverPopup or its wrapper
+    const gap = 10; // Gap between card and popup
+
+    let topRelativeToSection = rect.top - sectionRect.top;
+    let leftRelativeToSection;
+    let transform = 'translateX(10px)'; // Default to right
+
+    // Check available space to the right of the card relative to the section
+    const spaceRightOfCardInSection = sectionRect.right - rect.right;
+
+    if (spaceRightOfCardInSection >= popupWidth + gap) {
+      // Enough space on the right, position to the right
+      leftRelativeToSection = rect.right - sectionRect.left;
+      transform = 'translateX(10px)';
+    } else {
+      // Not enough space on the right, position to the left
+      leftRelativeToSection = rect.left - sectionRect.left - popupWidth - gap;
+      transform = 'translateX(-10px)';
+
+      // Optional: Prevent popup from going off the left edge of the section
+      if (leftRelativeToSection < 0) {
+          leftRelativeToSection = 0; // Stick to the left edge of the section
+          transform = 'translateX(0)'; // No transform needed if against the edge
+      }
+    }
+
+     // Optional: Ensure popup doesn't go off the top edge of the section
+     if (topRelativeToSection < 0) {
+         topRelativeToSection = 0; // Stick to the top edge of the section
+     }
+     // Optional: Ensure popup doesn't go off the bottom edge of the section
+     // This is more complex as popup height is dynamic. A simple fix is to limit top or let it scroll.
+     // Let's just ensure it doesn't go off top for simplicity here.
 
 
     if (popupTimerRef.current) {
@@ -209,10 +238,11 @@ function CourseListPage() {
 
     popupTimerRef.current = setTimeout(() => {
       setHoveredCourse(course);
-      // Store the calculated position relative to the section
-      setPopupPosition({ top: topRelativeToSection, left: leftRelativeToSection });
+      // Store the calculated position including the transform value
+      setPopupPosition({ top: topRelativeToSection, left: leftRelativeToSection, transform });
     }, 300); // Delay before showing popup
   };
+
 
   const handleMouseLeave = () => {
      if (!isLargeScreen) return;
@@ -296,7 +326,7 @@ function CourseListPage() {
                     variants={sidebarVariants}
                     className={`
                         fixed inset-0 z-50 bg-white dark:bg-gray-900 overflow-y-auto p-6 flex flex-col
-                        lg:static lg:inset-auto lg:z-auto lg:w-1/4 xl:w-1/5 lg:flex-shrink-0 lg:transform-none lg:overflow-y-visible lg:pl-40 lg:bg-transparent lg:dark:bg-transparent lg:flex
+                        lg:static lg:inset-auto lg:z-auto lg:w-1/4 xl:w-1/5 lg:flex-shrink-0 lg:transform-none lg:overflow-y-visible lg:pl-10 lg:bg-transparent lg:dark:bg-transparent lg:flex
                         transition-transform duration-300 ease-in-out
                         ${!isLargeScreen && showLeftFilter ? 'translate-x-0' : '-translate-x-full'}
                         lg:border-r lg:border-gray-200 dark:lg:border-gray-700
@@ -330,10 +360,11 @@ function CourseListPage() {
 
         {/* Main Content Area (Top Filters, Course Grid, Pagination) */}
         <div className="flex-1">
-           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className=" px-4 sm:px-6 lg:px-8">
 
               {/* Top Filter/Sort Area (Visible on large screens) */}
-              {isLargeScreen && (
+              {/* Use responsive display classes: hidden below md, flex from md up */}
+               <div className=" mb-8 hidden lg:flex flex-col md:flex-row md:items-center justify-between gap-4"> {/* Corrected md:flex from md:flex */}
                    <TopFilters
                        categories={categories}
                        selectedCategory={filters.category}
@@ -343,13 +374,13 @@ function CourseListPage() {
                        onSortChange={handleSortChange}
                        totalCourses={totalCourses}
                    />
-              )}
+               </div>
 
 
               {/* Course Grid */}
                {totalCourses > 0 ? (
                     <motion.div
-                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-6 lg:gap-8 mb-12"
+                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-6 lg:gap-8 mb-12"
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
@@ -403,7 +434,7 @@ function CourseListPage() {
                  position: 'absolute', // Use absolute positioning relative to the parent section
                  top: `${popupPosition.top}px`, // Use top relative to section's top
                  left: `${popupPosition.left}px`, // Use left relative to section's left
-                 transform: 'translateX(10px)', // Add gap to the right of the card's edge
+                 transform: popupPosition.transform, // Apply the calculated transform
                  zIndex: 50,
              }}
              onMouseEnter={handleMouseEnterPopup} // Pass hover events to keep popup open
