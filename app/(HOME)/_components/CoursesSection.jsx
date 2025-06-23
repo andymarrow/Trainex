@@ -1,27 +1,27 @@
+// app/_components/CoursesSection.js (Assuming this path based on your imports)
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import CourseCard from './CourseCard';
-import HoverPopup from './HoverPopup';
-import { sampleCourses } from '@/lib/constants';
+import HoverPopup from './HoverPopup'; // Make sure this path is correct
+import { sampleCourses } from '@/lib/constants'; // Make sure this path is correct
 import { FaBookOpen } from 'react-icons/fa';
 
 function CoursesSection() {
   const router = useRouter();
 
   const [hoveredCourse, setHoveredCourse] = useState(null);
+  // popupPosition will now store { top, left } relative to the section
   const [popupPosition, setPopupPosition] = useState(null);
   const popupTimerRef = useRef(null);
 
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
 
-
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
-  const sectionRef = useRef(null);
-
+  const sectionRef = useRef(null); // Ref for the main section, needed for absolute positioning context
 
   // Effect to track screen size for responsive popup display
   useEffect(() => {
@@ -42,8 +42,9 @@ function CoursesSection() {
         clearTimeout(popupTimerRef.current);
       }
     };
-  }, []); 
-  const uniqueCategories = Array.from(new Set(sampleCourses.map(course => course.category).filter(Boolean))); // Filter out undefined/null categories
+  }, []);
+
+  const uniqueCategories = Array.from(new Set(sampleCourses.map(course => course.category).filter(Boolean)));
   const categories = ['All Categories', ...uniqueCategories];
 
   // Filter courses based on the selected category
@@ -51,13 +52,20 @@ function CoursesSection() {
     ? sampleCourses
     : sampleCourses.filter(course => course.category === selectedCategory);
 
-
-  // --- Hover Popup Logic ---
+  // --- Hover Popup Logic (Using Absolute Positioning) ---
   const handleMouseEnterCard = (course, cardElement) => {
+    // Only show popup on large screens as per existing logic
     if (!isLargeScreen) return;
 
     const rect = cardElement.getBoundingClientRect();
-    const calculatedPosition = { top: rect.top, left: rect.right };
+    // Get the position of the section relative to the viewport
+    const sectionRect = sectionRef.current ? sectionRef.current.getBoundingClientRect() : { top: 0, left: 0 };
+
+    // Calculate position relative to the section's top-left corner
+    // top: distance from top of section to top of card
+    // left: distance from left of section to right of card
+    const topRelativeToSection = rect.top - sectionRect.top;
+    const leftRelativeToSection = rect.right - sectionRect.left;
 
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
@@ -65,7 +73,8 @@ function CoursesSection() {
 
     popupTimerRef.current = setTimeout(() => {
       setHoveredCourse(course);
-      setPopupPosition(calculatedPosition);
+      // Store the calculated position relative to the section
+      setPopupPosition({ top: topRelativeToSection, left: leftRelativeToSection });
     }, 300); // Delay before showing popup
   };
 
@@ -83,15 +92,18 @@ function CoursesSection() {
      }, 300);
    };
 
+   // Keep the popup open when the mouse moves from the card onto the popup itself
   const handleMouseEnterPopup = () => {
      // Only relevant if the popup is active and on a large screen
-     if (!isLargeScreen || !activeCourse) return;
+     if (!isLargeScreen || !hoveredCourse) return;
 
      if (popupTimerRef.current) {
         clearTimeout(popupTimerRef.current);
      }
+     // No need to set state, just prevent the timer from hiding the popup
   };
 
+  // Re-use handleMouseLeave for leaving the popup
   const handleMouseLeavePopup = handleMouseLeave;
   // --- End Hover Popup Logic ---
 
@@ -108,14 +120,19 @@ function CoursesSection() {
     }
   };
 
-
   // Handler for the "View All Courses" button click
   const handleViewAllClick = () => {
-    router.push('/courselist');
+    // Clear hover state before navigating
+    setHoveredCourse(null);
+    setPopupPosition(null);
+    if (popupTimerRef.current) {
+        clearTimeout(popupTimerRef.current);
+    }
+    router.push('/CourseList');
   };
 
-  // Find the course data for the hovered ID
-  const activeCourse = sampleCourses.find(c => c.id === hoveredCourse?.id);
+  // Find the course data for the hovered course object
+  const activeCourseData = sampleCourses.find(c => c.id === hoveredCourse?.id);
 
   // Framer Motion Variants for Grid and Items
   const containerVariants = {
@@ -123,20 +140,31 @@ function CoursesSection() {
     visible: {
       opacity: 1,
       transition: {
-        // Stagger children animation by a small amount
         delayChildren: 0.2,
-        staggerChildren: 0.1, // Add a 0.1s delay between each child's animation start
+        staggerChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 }, // Start slightly lower and invisible
-    visible: { y: 0, opacity: 1 },   // End at original position and visible
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  // Handler for navigating from CourseCard
+  const handleNavigateFromCard = (courseId) => {
+      // Clear hover state before navigating
+      setHoveredCourse(null);
+      setPopupPosition(null);
+      if (popupTimerRef.current) {
+          clearTimeout(popupTimerRef.current);
+      }
+      router.push(`/CourseList/${courseId}`);
   };
 
 
   return (
+    // section has position: relative
     <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-transparent relative" ref={sectionRef}>
       <div className="max-w-7xl mx-auto">
         {/* Section Titles */}
@@ -174,7 +202,7 @@ function CoursesSection() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          key={selectedCategory} 
+          key={selectedCategory}
         >
            {filteredCourses.length > 0 ? (
              filteredCourses.map(course => (
@@ -186,6 +214,7 @@ function CoursesSection() {
                   course={course}
                   onMouseEnter={handleMouseEnterCard}
                   onMouseLeave={handleMouseLeave}
+                  onClick={handleNavigateFromCard} // Add onClick for navigation
                 />
               </motion.div>
             ))
@@ -196,27 +225,40 @@ function CoursesSection() {
           )}
         </motion.div>
 
-        {/* "View All Courses" */}
+        {/* "View All Courses" Button */}
         <div className="mt-10 text-center">
           <motion.button
              onClick={handleViewAllClick}
              className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400"
-             whileHover={{ scale: 1.05 }} 
-             whileTap={{ scale: 0.98 }} 
+             whileHover={{ scale: 1.05 }}
+             whileTap={{ scale: 0.98 }}
           >
             View All Courses →
           </motion.button>
         </div>
 
 
-        {/* Render the Hover Popup */}
-        {activeCourse && popupPosition && isLargeScreen && (
-          <HoverPopup
-            course={activeCourse}
-            position={popupPosition}
-            onMouseEnter={handleMouseEnterPopup}
-            onMouseLeave={handleMouseLeavePopup}
-          />
+        {/* Render the Hover Popup - Positioned ABSOLUTELY relative to the parent section */}
+        {/* Ensure activeCourseData exists for popup content */}
+        {activeCourseData && popupPosition && isLargeScreen && (
+          // This div acts as the positioned container for the popup content
+          <div
+             style={{
+                 position: 'absolute', // Use absolute positioning relative to the parent section
+                 top: `${popupPosition.top}px`, // Use top relative to section's top
+                 left: `${popupPosition.left}px`, // Use left relative to section's left
+                 transform: 'translateX(10px)', // Add gap to the right of the card's edge
+                 zIndex: 50, // Ensure it's above other content
+             }}
+             onMouseEnter={handleMouseEnterPopup} // Pass hover events to keep popup open
+             onMouseLeave={handleMouseLeavePopup}
+          >
+             {/* The HoverPopup content itself */}
+             <HoverPopup
+               course={activeCourseData}
+               // No need to pass position prop or mouse handlers to HoverPopup itself anymore
+             />
+          </div>
         )}
 
       </div>

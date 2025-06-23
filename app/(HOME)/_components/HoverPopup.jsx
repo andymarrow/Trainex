@@ -1,59 +1,48 @@
-// _components/HoverPopup.js
+// components/HoverPopup.js
+"use client";
 
 import React from 'react';
-import Link from 'next/link';
-import { FaCheckCircle, FaHeart } from 'react-icons/fa'; // Make sure FaHeart is imported
+import Link from 'next/link'; // Import Link
+import { FaCheckCircle, FaHeart } from 'react-icons/fa';
 
-function HoverPopup({ course, position, onMouseEnter, onMouseLeave }) {
-  if (!course || !position) return null; // Don't render if no course or position data
+// HoverPopup doesn't need position prop or mouse handlers anymore as parent handles positioning
+function HoverPopup({ course }) { // Removed position, onMouseEnter, onMouseLeave props
+  if (!course) return null;
 
   const {
     id,
     title,
-    description, // Use the description array
+    description,
     currentPrice,
     originalPrice,
     isBestseller,
   } = course;
 
-  // Inline style for positioning the popup
-  const popupStyle = {
-    position: 'absolute',
-    top: `${position.top}px`,
-    // Calculate left position to appear to the right of the card
-    left: `${position.left}px`,
-    width: '300px', // Keep a fixed width for the popup
-    zIndex: 50,
-    transform: 'translateX(10px)', // Add a small gap between card and popup
-    // TODO: Add logic here to position left instead of right if near the right edge
-    // Example (simplified - requires window width and popup width measurement):
-    // const isNearRightEdge = (position.right + 300 + 10) > window.innerWidth; // 300 is popup width, 10 is gap
-    // left: isNearRightEdge ? `${position.left - 300 - 10}px` : `${position.left}px`,
-    // transform: isNearRightEdge ? 'translateX(-10px)' : 'translateX(10px)',
-  };
-
 
   return (
+    // This div is now the content *inside* the absolutely positioned wrapper in CourseListPage
+    // It handles its own appearance styling (background, border, shadow, padding)
+    // And potentially width/zIndex if not set on the parent wrapper
     <div
-      style={popupStyle}
       className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 transition-opacity duration-200 opacity-100"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      // Mouse events are handled by the wrapper div in CourseListPage
+      style={{ width: '300px' }} // Explicitly set width here for the popup content
     >
-      {/* Title */}
-      <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-2">
-        {title}
-      </h3>
+      {/* Title - Make it a Link for navigation */}
+      <Link href={`/CourseList/${id}`} className="block focus:outline-none focus:underline">
+          <h3 className="font-bold text-lg text-blue-600 hover:text-blue-700 dark:text-cyan-400 dark:hover:text-cyan-500 transition-colors mb-2 line-clamp-2">
+              {title}
+          </h3>
+      </Link>
 
-      {/* Bestseller/Meta Info (Placeholder for now) */}
+
+      {/* Bestseller/Meta Info */}
       <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
          {isBestseller && (
             <span className="inline-block bg-yellow-400 dark:bg-yellow-500 text-gray-800 dark:text-gray-100 text-xs font-bold px-1.5 py-0.5 rounded-full mr-2">
               Bestseller
             </span>
          )}
-         {/* Add placeholder for 'Updated', 'Total Hours', 'Levels', 'Subtitles' if available */}
-         {/* <span className="inline-block">Updated February 2025</span> */}
       </div>
 
       {/* Description Points */}
@@ -76,26 +65,28 @@ function HoverPopup({ course, position, onMouseEnter, onMouseLeave }) {
 
 
       {/* Buttons - Use flex and gap */}
-      <div className="flex items-center gap-2"> {/* Adjusted gap slightly for three items */}
+      <div className="flex items-center gap-2 flex-shrink-0">
         {/* Add to Cart Button */}
-        {/* Use flex-grow to make Add to Cart and Learn More share available space */}
-        <button className="flex-grow bg-blue-600 dark:bg-cyan-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-cyan-700 transition-colors text-sm text-center">
+        <button className="flex-grow bg-blue-600 dark:bg-cyan-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-cyan-700 transition-colors text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400">
           Add to Cart
         </button>
 
-     
+        {/* Learn More Button - Use Link for navigation */}
+         <Link href={`/CourseList/${id}`} className="flex-grow">
+            <button className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400">
+                Learn More
+            </button>
+         </Link>
 
         {/* Wishlist/Like Button */}
-        {/* This button is fixed size, doesn't grow with flex-grow */}
         <button
           className="p-2 border rounded-full text-gray-600 hover:text-red-500 transition-colors
                      dark:border-gray-600 dark:text-gray-400 dark:hover:text-red-400
-                     hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400 focus:ring-opacity-50"
-           // TODO: Add actual like/wishlist logic here
+                     hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400 focus:ring-opacity-50 flex-shrink-0"
            onClick={() => { console.log(`Liked course: ${title}`); /* Add your state update or API call */ }}
-           aria-label={`Add ${title} to wishlist`} // Accessibility label
+           aria-label={`Add ${title} to wishlist`}
         >
-           <FaHeart className="h-5 w-5" /> {/* Use the Heart icon */}
+           <FaHeart className="h-5 w-5" />
         </button>
       </div>
     </div>

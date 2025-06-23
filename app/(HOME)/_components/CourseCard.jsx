@@ -1,12 +1,13 @@
+// components/CourseCard.js
 "use client"
 
 import React, { useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { FaStar } from 'react-icons/fa';
 
-function CourseCard({ course, onMouseEnter, onMouseLeave }) { 
-  const cardRef = useRef(null); 
+// Add 'onClick' to the props
+function CourseCard({ course, onMouseEnter, onMouseLeave, onClick }) {
+  const cardRef = useRef(null);
 
   const {
     id,
@@ -25,9 +26,9 @@ function CourseCard({ course, onMouseEnter, onMouseLeave }) {
     const stars = [];
     for (let i = 0; i < 5; i++) {
       if (i < filledStars) {
-        stars.push(<FaStar key={i} className="text-yellow-500 dark:text-yellow-400 w-4 h-4" />); // Added size classes
+        stars.push(<FaStar key={i} className="text-yellow-500 dark:text-yellow-400 w-4 h-4" />);
       } else {
-        stars.push(<FaStar key={i} className="text-gray-300 dark:text-gray-600 w-4 h-4" />); // Added size classes
+        stars.push(<FaStar key={i} className="text-gray-300 dark:text-gray-600 w-4 h-4" />);
       }
     }
     return stars;
@@ -47,10 +48,21 @@ function CourseCard({ course, onMouseEnter, onMouseLeave }) {
     }
   };
 
+  // Handle click on the card
+  const handleCardClick = () => {
+      if (onClick) {
+          onClick(course.id); // Call the passed-down onClick handler with the course ID
+      }
+      // Optional: Clear hover state immediately on click
+      // if (onMouseLeave) {
+      //     onMouseLeave();
+      // }
+  };
+
 
   return (
   <div
-      ref={cardRef} 
+      ref={cardRef}
       className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden
                  shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-lg
                  transition-all duration-200 ease-in-out
@@ -58,10 +70,9 @@ function CourseCard({ course, onMouseEnter, onMouseLeave }) {
                  hover:-translate-y-1 focus:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400 focus:ring-opacity-50 cursor-pointer" // Added cursor-pointer
       onMouseEnter={handleMouseEnter} // Attach handlers
       onMouseLeave={handleMouseLeave}
-      // The primary navigation is now via the button in the hover popup
-      // we might add an onClick here if the *card itself* should also navigate,
-      // but the typical pattern for this UI is popup on hover, click on popup button.
-      // onClick={() => router.push(`/courselist/${id}`)}
+      onClick={handleCardClick} // Attach click handler
+      role="button" // Indicate that this div is interactive for accessibility
+      tabIndex="0" // Make it focusable for keyboard navigation
     >
       {/* Course Thumbnail */}
       <div className="relative w-full h-48 sm:h-56 md:h-48 lg:h-56 overflow-hidden">
