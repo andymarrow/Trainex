@@ -26,19 +26,19 @@ export const searchCoursesController = async (request) => {
 	const searchParams = request.nextUrl.searchParams
     const query = searchParams.get('query')
 
-    const courses = searchCourses(query);
+    const courses = await searchCourses(query);
 
 	return NextResponse.json({ courses });
 };
 
 export const getCourseController = async (request, { params }) => {
-	const courseId = params.courseId;
-
+	const { courseId } = await params;
+	console.log(courseId)
 	if (!courseId) {
 		throw new createHttpError.BadRequest("Invalid course id");
 	}
 
-	const course = getCourse(courseId);
+	const course = await getCourse(courseId);
 
 	return NextResponse.json({ course });
 };
@@ -62,7 +62,7 @@ export const createCourseController = async (request) => {
 };
 
 export const updateCourseController = async (request, { params }) => {
-	const { user } = getSession(headers());
+	const { user } = await getSession(headers());
 	const { courseId } = params;
 
 	if (!canUpdateCourse(user.id)) {
@@ -75,7 +75,7 @@ export const updateCourseController = async (request, { params }) => {
 		throw new createHttpError.BadRequest("Invalid course id");
 	}
 
-	const { courseData } = request.body;
+	const { courseData } = await request.json();
 
 	// TODO: generate zod schemas for course and check the course data before passing
 
@@ -85,7 +85,7 @@ export const updateCourseController = async (request, { params }) => {
 };
 
 export const deleteCourseController = async (request, { params }) => {
-	const { user } = getSession(headers());
+	const { user } = await getSession(headers());
 	const { courseId } = params;
 
 	if (!canDeleteCourse(user.id)) {

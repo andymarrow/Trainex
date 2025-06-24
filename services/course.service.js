@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 // GET Actions
 export const getCourse = async (courseId) => {
 	return prisma.course.findUnique({
-		where: courseId,
+		where: { id: courseId },
 		include: {
 			modules: true,
 			instructor: {
@@ -27,6 +27,7 @@ export const searchCourses = async (searchPhrase) => {
 		where: {
 			title: {
 				contains: searchPhrase,
+				mode: "insensitive"
 			},
 		},
 	});

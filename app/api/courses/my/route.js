@@ -1,4 +1,4 @@
-import { getEnrolledCourses } from "@/services/student.services";
+import { getEnrolledCoursesController } from "@/controllers/student.controller";
 import { catchErrors } from "@/utils/helper";
 
-export const GET = catchErrors(getEnrolledCourses)
+export const GET = catchErrors(getEnrolledCoursesController)
