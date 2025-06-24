@@ -47,11 +47,11 @@ function Header() {
 		},
 		{
 			name: "Blog",
-			href: "/blog",
+			href: "/Blog",
 			dropdown: [
-				{ name: "All Blog Posts", href: "/blog" },
-				{ name: "Categories", href: "/blog/categories" },
-				{ name: "Archives", href: "/blog/archives" },
+				{ name: "All Blog Posts", href: "/Blog" },
+				{ name: "Categories", href: "/Blog" },
+				{ name: "Archives", href: "/Blog" },
 			],
 		},
 		{ name: "About", href: "/about" },
