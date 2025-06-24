@@ -8,6 +8,24 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider                         = "zod-prisma-types"
+  useMultipleFiles                 = true
+  writeBarrelFiles                 = false // default is true
+  createInputTypes                 = false // default is true
+  createModelTypes                 = true // default is true
+  addInputTypeValidation           = false // default is true
+  addIncludeType                   = false // default is true
+  addSelectType                    = false // default is true
+  validateWhereUniqueInput         = false // default is true
+  createOptionalDefaultValuesTypes = true // default is false
+  createRelationValuesTypes        = false // default is false
+  createPartialTypes               = false // default is false
+  useDefaultValidators             = false // default is true
+  coerceDate                       = false // default is true
+  writeNullishInModelTypes         = false // default is false
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
