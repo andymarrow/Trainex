@@ -1,22 +1,24 @@
 import { z } from 'zod';
 
 /////////////////////////////////////////
-// MODULE SCHEMA
+// LESSON SCHEMA
 /////////////////////////////////////////
 
-export const ModuleSchema = z.object({
+export const LessonSchema = z.object({
   id: z.string(),
   title: z.string(),
-  courseId: z.string(),
+  moduleId: z.string(),
   order: z.number(),
 })
 
+
 /////////////////////////////////////////
-// MODULE OPTIONAL DEFAULTS SCHEMA
+// LESSON OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
 
-export const ModuleOptionalDefaultsSchema = ModuleSchema.merge(z.object({
+export const LessonOptionalDefaultsSchema = LessonSchema.merge(z.object({
   id: z.string().optional(),
 }))
 
-export default ModuleSchema;
+
+export default LessonSchema;

@@ -1,21 +1,22 @@
 import { z } from 'zod';
 
 /////////////////////////////////////////
-// ADMIN SCHEMA
+// STUDENT SCHEMA
 /////////////////////////////////////////
 
-export const AdminSchema = z.object({
+export const StudentSchema = z.object({
   id: z.string(),
-  permissions: z.string().array(),
   userId: z.string(),
 })
 
+
 /////////////////////////////////////////
-// ADMIN OPTIONAL DEFAULTS SCHEMA
+// STUDENT OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
 
-export const AdminOptionalDefaultsSchema = AdminSchema.merge(z.object({
+export const StudentOptionalDefaultsSchema = StudentSchema.merge(z.object({
   id: z.string().optional(),
 }))
 
-export default AdminSchema;
+
+export default StudentSchema;

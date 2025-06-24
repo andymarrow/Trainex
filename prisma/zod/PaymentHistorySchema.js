@@ -14,6 +14,7 @@ export const PaymentHistorySchema = z.object({
   courseId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // PAYMENT HISTORY OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -22,5 +23,6 @@ export const PaymentHistoryOptionalDefaultsSchema = PaymentHistorySchema.merge(z
   id: z.string().optional(),
   paidAt: z.date().optional(),
 }))
+
 
 export default PaymentHistorySchema;

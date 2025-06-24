@@ -21,6 +21,7 @@ export const CourseSchema = z.object({
   instructorId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // COURSE OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -30,5 +31,6 @@ export const CourseOptionalDefaultsSchema = CourseSchema.merge(z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 }))
+
 
 export default CourseSchema;

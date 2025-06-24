@@ -16,11 +16,13 @@ export const SessionSchema = z.object({
   impersonatedBy: z.string().nullable(),
 })
 
+
 /////////////////////////////////////////
 // SESSION OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
 
 export const SessionOptionalDefaultsSchema = SessionSchema.merge(z.object({
 }))
+
 
 export default SessionSchema;

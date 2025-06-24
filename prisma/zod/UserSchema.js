@@ -19,6 +19,7 @@ export const UserSchema = z.object({
   banExpires: z.date().nullable(),
 })
 
+
 /////////////////////////////////////////
 // USER OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -29,5 +30,6 @@ export const UserOptionalDefaultsSchema = UserSchema.merge(z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 }))
+
 
 export default UserSchema;

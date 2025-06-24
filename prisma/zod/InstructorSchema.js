@@ -12,6 +12,7 @@ export const InstructorSchema = z.object({
   userId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // INSTRUCTOR OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -19,5 +20,6 @@ export const InstructorSchema = z.object({
 export const InstructorOptionalDefaultsSchema = InstructorSchema.merge(z.object({
   id: z.string().optional(),
 }))
+
 
 export default InstructorSchema;

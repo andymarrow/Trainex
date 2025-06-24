@@ -20,11 +20,13 @@ export const AccountSchema = z.object({
   updatedAt: z.date(),
 })
 
+
 /////////////////////////////////////////
 // ACCOUNT OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
 
 export const AccountOptionalDefaultsSchema = AccountSchema.merge(z.object({
 }))
+
 
 export default AccountSchema;

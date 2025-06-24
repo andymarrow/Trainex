@@ -17,6 +17,7 @@ export const QuizSchema = z.object({
   moduleId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // QUIZ OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -26,5 +27,6 @@ export const QuizOptionalDefaultsSchema = QuizSchema.merge(z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 }))
+
 
 export default QuizSchema;

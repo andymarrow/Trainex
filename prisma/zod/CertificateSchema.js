@@ -11,6 +11,7 @@ export const CertificateSchema = z.object({
   studentCourseId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // CERTIFICATE OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -19,5 +20,6 @@ export const CertificateOptionalDefaultsSchema = CertificateSchema.merge(z.objec
   id: z.string().optional(),
   issuedAt: z.date().optional(),
 }))
+
 
 export default CertificateSchema;

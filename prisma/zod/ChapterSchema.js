@@ -13,6 +13,7 @@ export const ChapterSchema = z.object({
   order: z.number(),
 })
 
+
 /////////////////////////////////////////
 // CHAPTER OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -20,5 +21,6 @@ export const ChapterSchema = z.object({
 export const ChapterOptionalDefaultsSchema = ChapterSchema.merge(z.object({
   id: z.string().optional(),
 }))
+
 
 export default ChapterSchema;

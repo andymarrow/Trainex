@@ -12,6 +12,7 @@ export const UserPreferenceSchema = z.object({
   notifications: z.boolean(),
 })
 
+
 /////////////////////////////////////////
 // USER PREFERENCE OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -22,5 +23,6 @@ export const UserPreferenceOptionalDefaultsSchema = UserPreferenceSchema.merge(z
   language: z.string().optional(),
   notifications: z.boolean().optional(),
 }))
+
 
 export default UserPreferenceSchema;

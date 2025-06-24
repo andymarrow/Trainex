@@ -12,6 +12,7 @@ export const NotificationSchema = z.object({
   createdAt: z.date(),
 })
 
+
 /////////////////////////////////////////
 // NOTIFICATION OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -21,5 +22,6 @@ export const NotificationOptionalDefaultsSchema = NotificationSchema.merge(z.obj
   isRead: z.boolean().optional(),
   createdAt: z.date().optional(),
 }))
+
 
 export default NotificationSchema;

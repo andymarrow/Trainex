@@ -14,6 +14,7 @@ export const QuizAttemptSchema = z.object({
   quizId: z.string(),
 })
 
+
 /////////////////////////////////////////
 // QUIZ ATTEMPT OPTIONAL DEFAULTS SCHEMA
 /////////////////////////////////////////
@@ -22,5 +23,6 @@ export const QuizAttemptOptionalDefaultsSchema = QuizAttemptSchema.merge(z.objec
   id: z.string().optional(),
   completedAt: z.date().optional(),
 }))
+
 
 export default QuizAttemptSchema;
