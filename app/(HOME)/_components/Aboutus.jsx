@@ -196,7 +196,7 @@ function Aboutus() {
             className="absolute bottom-0 left-0 w-[60%] h-[60%] object-cover rounded-lg shadow-xl border-4 border-white dark:border-gray-900" // Border for separation
           />
           {/* Experience Circle - Positioned relative to the container */}
-          <div className="absolute top-[70%] right-[70%] w-32 h-32 sm:w-40 sm:h-40 bg-blue-600 text-white rounded-full flex flex-col items-center justify-center text-center text-sm sm:text-md font-bold shadow-xl border-4 border-white dark:border-gray-900 transform translate-x-[-50%] translate-y-[-50%]">
+          <div className="absolute top-[70%] right-[35%] w-32 h-32 sm:w-40 sm:h-40 bg-blue-600 text-white rounded-full flex flex-col items-center justify-center text-center text-sm sm:text-md font-bold shadow-xl border-4 border-white dark:border-gray-900 transform translate-x-[-50%] translate-y-[-50%]">
             <FaGraduationCap className="text-3xl sm:text-4xl mb-1" /> {/* Icon */}
             <span>24+</span> {/* Years Text */}
             <span>Years</span>

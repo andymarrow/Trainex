@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
 	title: "E - learning",
 	description: "Building the future",
+	metadataBase: new URL('http://localhost:3000'),
 };
 
 export default function RootLayout({ children }) {
