@@ -160,7 +160,7 @@ function CoursesSection() {
     if (popupTimerRef.current) {
         clearTimeout(popupTimerRef.current);
     }
-    router.push('/courselist'); // Use lowercase 'courselist'
+    router.push('/CourseList'); 
   };
 
   // Find the course data for the hovered course object
@@ -191,7 +191,7 @@ function CoursesSection() {
       if (popupTimerRef.current) {
           clearTimeout(popupTimerRef.current);
       }
-      router.push(`/courselist/${courseId}`); // Use lowercase 'courselist'
+      router.push(`/CourseList/${courseId}`); 
   };
 
 

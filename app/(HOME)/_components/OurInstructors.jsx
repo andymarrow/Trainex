@@ -68,7 +68,7 @@ function OurInstructors() {
 
         {/* Instructors Display - Centered and slightly overlapping */}
         <motion.div
-          className="flex justify-center items-end flex-wrap gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-20 xl:gap-x-24 mb-16" // Use flexbox to center and space items
+          className="gap-y-12  flex justify-center items-end flex-wrap gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-20 xl:gap-x-24 mb-16" // Use flexbox to center and space items
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
