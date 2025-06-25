@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PaymentMethodSchema } from '../inputTypeSchemas/PaymentMethodSchema'
+import { PaymentMethodSchema } from '../input-schemas/PaymentMethodSchema'
 
 /////////////////////////////////////////
 // PAYMENT HISTORY SCHEMA

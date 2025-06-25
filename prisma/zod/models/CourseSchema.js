@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Prisma } from '@prisma/client'
-import { CourseLevelSchema } from '../inputTypeSchemas/CourseLevelSchema'
+import { CourseLevelSchema } from '../input-schemas/CourseLevelSchema'
 
 /////////////////////////////////////////
 // COURSE SCHEMA

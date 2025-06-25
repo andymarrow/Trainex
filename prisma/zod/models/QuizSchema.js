@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { JsonValueSchema } from '../inputTypeSchemas/JsonValueSchema'
+import { JsonValueSchema } from '../input-schemas/JsonValueSchema'
 
 /////////////////////////////////////////
 // QUIZ SCHEMA
