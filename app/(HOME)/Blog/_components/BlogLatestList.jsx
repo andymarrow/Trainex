@@ -45,7 +45,7 @@ function BlogLatestList({ blogs }) {
             Latest Posts
         </h2>
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8" // Responsive grid
+          className="grid grid-cols-1 md:grid-cols-3 gap-8" // Responsive grid
           variants={containerVariants}
           initial="hidden"
           animate="visible"

@@ -54,8 +54,8 @@ function Header() {
 				{ name: "Archives", href: "/Blog" },
 			],
 		},
-		{ name: "About", href: "/about" },
-		{ name: "Contact", href: "/contact" },
+		{ name: "About", href: "/About" },
+		{ name: "Contact", href: "/Contact" },
 	];
 
 	return (

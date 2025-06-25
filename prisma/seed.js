@@ -18,6 +18,9 @@ async function main() {
 				},
 			},
 		},
+		include: {
+			instructor: true
+		}
 	});
 
 	const studentUser = await prisma.user.create({
@@ -28,7 +31,6 @@ async function main() {
 			emailVerified: true,
 			student: {
 				create: {
-					progress: 0.3,
 				},
 			},
 		},
@@ -44,7 +46,7 @@ async function main() {
 			tags: ["beginner", "programming"],
 			duration: 120,
 			level: "Beginner",
-			instructorId: instructorUser.instructor.id || "instructor-123",
+			instructorId: instructorUser.instructor?.id || "instructor-123",
 		},
 	});
 

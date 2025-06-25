@@ -85,7 +85,7 @@ function Contactus() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }} // Trigger animation when 10% is visible
     >
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center  rounded-lg overflow-hidden"> {/* Main content container */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 items-center  rounded-lg overflow-hidden"> {/* Main content container */}
 
         {/* Left Column: Image */}
         <motion.div
@@ -151,7 +151,7 @@ function Contactus() {
                            <label htmlFor="name" className="sr-only">Name</label>
                            <div className="relative">
                                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400"> {/* Adjusted icon color */}
-                                    <FaUser className="h-5 w-5" />
+                                    <FaUser className="h-4 w-4" />
                                 </span>
                                 <input
                                     type="text"
@@ -161,7 +161,7 @@ function Contactus() {
                                     value={formData.name}
                                     onChange={handleChange}
                                     // Adjusted background, text, border, and placeholder colors
-                                    className="block w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
+                                    className="block w-full text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
                                     required
                                 />
                            </div>
@@ -170,7 +170,7 @@ function Contactus() {
                            <label htmlFor="email" className="sr-only">Email Address</label>
                             <div className="relative">
                                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400"> {/* Adjusted icon color */}
-                                    <FaEnvelope className="h-5 w-5" />
+                                    <FaEnvelope className="h-4 w-4" />
                                 </span>
                                 <input
                                     type="email"
@@ -180,7 +180,7 @@ function Contactus() {
                                     value={formData.email}
                                     onChange={handleChange}
                                      // Adjusted background, text, border, and placeholder colors
-                                    className="block w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
+                                    className="block w-full text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
                                     required
                                 />
                            </div>
@@ -193,7 +193,7 @@ function Contactus() {
                            <label htmlFor="topic" className="sr-only">Topic</label>
                             <div className="relative">
                                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400"> {/* Adjusted icon color */}
-                                    <FaTag className="h-5 w-5" />
+                                    <FaTag className="h-4 w-4" />
                                 </span>
                                 <input
                                     type="text"
@@ -203,7 +203,7 @@ function Contactus() {
                                     value={formData.topic}
                                     onChange={handleChange}
                                      // Adjusted background, text, border, and placeholder colors
-                                    className="block w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
+                                    className="block w-full text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
                                     required
                                 />
                             </div>
@@ -213,7 +213,7 @@ function Contactus() {
                             <div className="relative">
                                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400"> {/* Adjusted icon color */}
                                     {/* Using calendar icon as in image, maybe use FaPencilAlt? */}
-                                    <FaRegCalendarAlt className="h-5 w-5" />
+                                    <FaRegCalendarAlt className="h-4 w-4" />
                                 </span>
                                 <input
                                     type="text"
@@ -223,7 +223,7 @@ function Contactus() {
                                     value={formData.subject}
                                     onChange={handleChange}
                                      // Adjusted background, text, border, and placeholder colors
-                                    className="block w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
+                                    className="block w-full text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400"
                                     required
                                 />
                             </div>
@@ -235,7 +235,7 @@ function Contactus() {
                        <label htmlFor="country" className="sr-only">Country</label>
                         <div className="relative">
                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400 pointer-events-none"> {/* Adjusted icon color */}
-                                <FaGlobeEurope className="h-5 w-5" />
+                                <FaGlobeEurope className="h-4 w-4" />
                             </span>
                             {/* Styled Select Input - Adjusted background, text, border colors */}
                            <select
@@ -243,7 +243,7 @@ function Contactus() {
                                 name="country"
                                 value={formData.country}
                                 onChange={handleChange}
-                                className="block w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-10 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400 appearance-none cursor-pointer" // appearance-none hides default arrow, pr-10 makes space for custom arrow if needed
+                                className="block w-full text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-700 rounded-md py-3 pl-10 pr-10 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-cyan-400 dark:focus:border-cyan-400 appearance-none cursor-pointer" // appearance-none hides default arrow, pr-10 makes space for custom arrow if needed
                                 required
                            >
                                {countries.map(country => (
