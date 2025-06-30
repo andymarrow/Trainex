@@ -19,8 +19,8 @@ async function main() {
 			},
 		},
 		include: {
-			instructor: true
-		}
+			instructor: true,
+		},
 	});
 
 	const studentUser = await prisma.user.create({
@@ -30,8 +30,7 @@ async function main() {
 			role: "student",
 			emailVerified: true,
 			student: {
-				create: {
-				},
+				create: {},
 			},
 		},
 	});
@@ -47,10 +46,11 @@ async function main() {
 			duration: 120,
 			level: "Beginner",
 			instructorId: instructorUser.instructor?.id || "instructor-123",
+			category: "Development",
 		},
 	});
 
-	const module = await prisma.module.create({
+	const section = await prisma.section.create({
 		data: {
 			title: "Basics",
 			order: 1,
@@ -58,19 +58,11 @@ async function main() {
 		},
 	});
 
-	const lesson = await prisma.lesson.create({
-		data: {
-			title: "Getting Started",
-			order: 1,
-			moduleId: module.id,
-		},
-	});
-
 	await prisma.chapter.create({
 		data: {
 			title: "Setup Environment",
 			order: 1,
-			lessonId: lesson.id,
+			sectionId: section.id,
 			content: {
 				type: "video",
 				url: "https://example.com/setup.mp4",
@@ -78,9 +70,9 @@ async function main() {
 		},
 	});
 
-	const quiz = await prisma.quiz.create({
+	const exercise = await prisma.exercise.create({
 		data: {
-			title: "Basics Quiz",
+			title: "Basics Exercise",
 			questions: [
 				{
 					q: "What is a variable?",
@@ -88,8 +80,8 @@ async function main() {
 				},
 			],
 			duration: 10,
-			order: 1,
-			moduleId: module.id,
+			order: 2,
+			sectionId: section.id,
 		},
 	});
 
@@ -99,10 +91,10 @@ async function main() {
 		},
 	});
 
-	await prisma.quizAttempt.create({
+	await prisma.exerciseAttempt.create({
 		data: {
 			studentId: student.id,
-			quizId: quiz.id,
+			exerciseId: exercise.id,
 			score: 90,
 			answers: {
 				q1: "A storage location",

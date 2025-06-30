@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { JsonValueSchema } from '../input-schemas/JsonValueSchema'
 import { Prisma } from '@prisma/client'
 import { CourseLevelSchema } from '../input-schemas/CourseLevelSchema'
 
@@ -11,7 +12,9 @@ export const CourseSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string(),
-  rating: z.number(),
+  category: z.string(),
+  rating: z.instanceof(Prisma.Decimal, { message: "Field 'rating' must be a Decimal. Location: ['Models', 'Course']"}),
+  reviewsCount: z.number(),
   thumbnail: z.string(),
   price: z.instanceof(Prisma.Decimal, { message: "Field 'price' must be a Decimal. Location: ['Models', 'Course']"}),
   tags: z.string().array(),
@@ -19,6 +22,9 @@ export const CourseSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   instructorId: z.string(),
+  targetAudience: JsonValueSchema.nullable(),
+  roadmap: JsonValueSchema.nullable(),
+  courseOutcomes: JsonValueSchema.nullable(),
 })
 
 
@@ -28,6 +34,8 @@ export const CourseSchema = z.object({
 
 export const CourseOptionalDefaultsSchema = CourseSchema.merge(z.object({
   id: z.string().optional(),
+  rating: z.instanceof(Prisma.Decimal, { message: "Field 'rating' must be a Decimal. Location: ['Models', 'Course']"}).optional(),
+  reviewsCount: z.number().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 }))
