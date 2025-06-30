@@ -43,6 +43,7 @@ model User {
   admin          Admin?          @relation("AdminProfile")
   userPreference UserPreference?
   notifications  Notification[]
+  reviews        Review[]
   // certificates Certificate
 
   //Better auth generated fields
@@ -64,9 +65,9 @@ model Student {
   enrolledCourses StudentCourse[]
   wishList        Course[]
 
-  userId         String           @unique
+  userId         String            @unique
   PaymentHistory PaymentHistory[]
-  quizScores     QuizAttempt[]
+  exerciseScores ExerciseAttempt[]
 }
 
 model Instructor {
@@ -97,89 +98,107 @@ model UserPreference {
 }
 
 model Course {
-  id          String      @id @default(uuid())
-  title       String
-  description String
-  rating      Float
-  thumbnail   String
-  price       Decimal
-  tags        String[]
-  duration    Int
-  modules     Module[]
-  level       CourseLevel
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id           String      @id @default(uuid())
+  title        String
+  description  String
+  category     String
+  rating       Decimal     @default(0)
+  reviewsCount Int         @default(0) // duplicate but easier
+  thumbnail    String
+  price        Decimal
+  tags         String[]
+  duration     Int
+  sections     Section[]
+  level        CourseLevel
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   enrolledUsers  StudentCourse[]
   wishlistedBy   Student[]
   instructor     Instructor       @relation(fields: [instructorId], references: [id])
   instructorId   String
   paymentHistory PaymentHistory[]
+  reviews        Review[]
 
-  @@index([rating, level, price, title, duration])
+  targetAudience Json?
+  roadmap        Json?
+  courseOutcomes Json?
+
+  @@index([rating, reviewsCount, level, price, title, duration])
 }
 
-model Module {
-  id       String   @id @default(uuid())
-  title    String
-  course   Course   @relation(fields: [courseId], references: [id])
+model Review {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  course   Course @relation(fields: [courseId], references: [id])
   courseId String
-  lessons  Lesson[]
-  order    Int
-  quizzes  Quiz[]
+
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // @@check(rating >= 1 && rating <= 5)
+
+  @@unique([userId, courseId]) // 1 review per user per course
+  @@index([rating, courseId])
 }
 
-model Lesson {
-  id       String    @id @default(uuid())
-  title    String
-  module   Module    @relation(fields: [moduleId], references: [id])
-  moduleId String
-  order    Int
-  chapters Chapter[]
+model Section {
+  id        String     @id @default(uuid())
+  title     String
+  course    Course     @relation(fields: [courseId], references: [id])
+  courseId  String
+  chapters  Chapter[]
+  order     Int
+  exercises Exercise[]
 }
 
 model Chapter {
-  id       String @id @default(uuid())
-  title    String
-  content  Json // could contain video URL, markdown, etc.
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId String
-  order    Int
+  id        String  @id @default(uuid())
+  title     String
+  content   Json // could contain video URL, markdown, etc.
+  duration  Int? // duration in minutes
+  order     Int
+  section   Section @relation(fields: [sectionId], references: [id])
+  sectionId String
 }
 
-model Quiz {
+model Exercise {
   id          String   @id @default(uuid())
   title       String
   description String?
   questions   Json[] // Easier to manage with Json and more flexible
   duration    Int // In minutes
-  order       Int // Used to know which lesson or quiz comes first
+  order       Int // Used to know which chapter or quiz comes first
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   // isPublished Boolean  @default(false)
 
-  module       Module        @relation(fields: [moduleId], references: [id])
-  moduleId     String
-  quizAttempts QuizAttempt[]
+  exerciseAttempts ExerciseAttempt[]
+
+  section   Section @relation(fields: [sectionId], references: [id])
+  sectionId String
 }
 
-model QuizAttempt {
+model ExerciseAttempt {
   id          String   @id @default(uuid())
-  score       Float?
+  score       Decimal?
   answers     Json // Made Json for flexibility
   completedAt DateTime @default(now())
 
-  student   Student @relation(fields: [studentId], references: [id])
-  quiz      Quiz    @relation(fields: [quizId], references: [id])
-  studentId String
-  quizId    String
+  student    Student  @relation(fields: [studentId], references: [id])
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  studentId  String
+  exerciseId String
 }
 
 model StudentCourse {
   id             String   @id @default(uuid())
   student        Student  @relation(fields: [studentId], references: [id])
   course         Course   @relation(fields: [courseId], references: [id])
-  progress       Float    @default(0)
+  progress       Decimal  @default(0)
   notes          Json? // Made json for convenience could be changed
   lastCheckpoint Json? // Made json for convenience could be changed
   createdAt      DateTime @default(now())

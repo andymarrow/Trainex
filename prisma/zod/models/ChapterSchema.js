@@ -9,8 +9,9 @@ export const ChapterSchema = z.object({
   id: z.string(),
   title: z.string(),
   content: JsonValueSchema,
-  lessonId: z.string(),
+  duration: z.number().nullable(),
   order: z.number(),
+  sectionId: z.string(),
 })
 
 

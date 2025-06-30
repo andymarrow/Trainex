@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { JsonValueSchema } from '../input-schemas/JsonValueSchema'
+import { Prisma } from '@prisma/client'
 
 /////////////////////////////////////////
 // STUDENT COURSE SCHEMA
@@ -7,7 +8,7 @@ import { JsonValueSchema } from '../input-schemas/JsonValueSchema'
 
 export const StudentCourseSchema = z.object({
   id: z.string(),
-  progress: z.number(),
+  progress: z.instanceof(Prisma.Decimal, { message: "Field 'progress' must be a Decimal. Location: ['Models', 'StudentCourse']"}),
   notes: JsonValueSchema.nullable(),
   lastCheckpoint: JsonValueSchema.nullable(),
   createdAt: z.date(),
@@ -24,7 +25,7 @@ export const StudentCourseSchema = z.object({
 
 export const StudentCourseOptionalDefaultsSchema = StudentCourseSchema.merge(z.object({
   id: z.string().optional(),
-  progress: z.number().optional(),
+  progress: z.instanceof(Prisma.Decimal, { message: "Field 'progress' must be a Decimal. Location: ['Models', 'StudentCourse']"}).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 }))
