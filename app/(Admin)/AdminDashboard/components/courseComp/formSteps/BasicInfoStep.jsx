@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { Form, Input, Select, Card, Row, Col } from "antd";
+import React, { use, useEffect } from "react";
+import { Form, Input, Select, Row, Col, Checkbox, Divider } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -7,10 +8,11 @@ const { TextArea } = Input;
 const BasicInfoStep = () => {
   const form = Form.useFormInstance();
   useEffect(() => {
-    console.log("Current form values:-------", form.getFieldsValue(true));
+    console.log("BasicInfoStep mounted---------", form.getFieldsValue());
   }, [form]);
   return (
-    <div>
+    <div className="p-4">
+      {/* Course Title */}
       <Form.Item
         name="title"
         label="Course Title"
@@ -22,6 +24,7 @@ const BasicInfoStep = () => {
         <Input placeholder="Master React in 2023" showCount maxLength={100} />
       </Form.Item>
 
+      {/* Subtitle */}
       <Form.Item
         name="subtitle"
         label="Subtitle"
@@ -35,17 +38,46 @@ const BasicInfoStep = () => {
         />
       </Form.Item>
 
+      <Divider orientation="left">Instructor Information</Divider>
+
+      {/* Instructor Name */}
+      <Form.Item
+        name={["instructor", "name"]}
+        label="Instructor Name"
+        rules={[{ required: true, message: "Instructor name is required" }]}
+      >
+        <Input placeholder="John Doe" prefix={<UserOutlined />} />
+      </Form.Item>
+
+      {/* Instructor Bio */}
+      <Form.Item
+        name={["instructor", "bio"]}
+        label="Instructor Bio"
+        rules={[{ required: true, message: "Instructor bio is required" }]}
+      >
+        <TextArea
+          rows={3}
+          placeholder="Expert in React with 10 years of experience..."
+          showCount
+          maxLength={500}
+        />
+      </Form.Item>
+
+      <Divider orientation="left">Course Details</Divider>
+
+      {/* Category and Subcategory */}
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
             name="category"
             label="Category"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Category is required" }]}
           >
             <Select placeholder="Select category">
               <Option value="web">Web Development</Option>
               <Option value="mobile">Mobile Development</Option>
               <Option value="data">Data Science</Option>
+              <Option value="design">UI/UX Design</Option>
             </Select>
           </Form.Item>
         </Col>
@@ -55,35 +87,64 @@ const BasicInfoStep = () => {
               <Option value="react">React.js</Option>
               <Option value="vue">Vue.js</Option>
               <Option value="angular">Angular</Option>
+              <Option value="node">Node.js</Option>
             </Select>
           </Form.Item>
         </Col>
       </Row>
 
+      {/* Difficulty Level - Checkbox Style */}
       <Form.Item
         name="level"
         label="Difficulty Level"
-        rules={[{ required: true }]}
+        rules={[
+          { required: true, message: "Please select a difficulty level" },
+        ]}
       >
-        <div className="flex gap-4">
-          {["beginner", "intermediate", "advanced"].map((level) => (
-            <Card
-              key={level}
-              hoverable
-              className={`w-1/3 text-center cursor-pointer ${
-                form.getFieldValue("level") === level ? "border-blue-500" : ""
-              }`}
-              onClick={() => form.setFieldValue("level", level)}
-            >
-              <h4 className="capitalize">{level}</h4>
-              <p className="text-gray-500">
-                {level === "beginner" && "No prior experience needed"}
-                {level === "intermediate" && "Some experience required"}
-                {level === "advanced" && "For professionals"}
-              </p>
-            </Card>
-          ))}
-        </div>
+        <Checkbox.Group className="w-full">
+          <Row gutter={16}>
+            {[
+              {
+                value: "beginner",
+                label: "Beginner",
+                description: "No prior experience needed",
+              },
+              {
+                value: "intermediate",
+                label: "Intermediate",
+                description: "Some experience required",
+              },
+              {
+                value: "advanced",
+                label: "Advanced",
+                description: "For experienced professionals",
+              },
+            ].map((level) => (
+              <Col span={8} key={level.value}>
+                <div
+                  className={`p-4 border rounded-lg cursor-pointer hover:border-blue-300 ${
+                    form.getFieldValue("level") === level.value
+                      ? "border-blue-500 border-2"
+                      : ""
+                  }`}
+                  onClick={() => form.setFieldsValue({ level: level.value })}
+                >
+                  <Checkbox
+                    value={level.value}
+                    checked={form.getFieldValue("level") === level.value}
+                    onChange={() => form.setFieldsValue({ level: level.value })}
+                    className="mb-2"
+                  >
+                    {level.label}
+                  </Checkbox>
+                  <p className="text-gray-500 text-sm ml-6">
+                    {level.description}
+                  </p>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Checkbox.Group>
       </Form.Item>
     </div>
   );

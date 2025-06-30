@@ -16,26 +16,64 @@ const CourseWizard = ({ initialData, onSubmit }) => {
   const [loading, setLoading] = useState(false);
 
   // Initialize form with data (create or edit)
+  // In your CourseWizard component
   useEffect(() => {
     const initializeForm = async () => {
       try {
         const values = initialData ||
           JSON.parse(localStorage.getItem("courseDraft")) || {
-            // Set default values for all form fields
+            //basic info
             title: "",
             subtitle: "",
+            instructor: {
+              name: "",
+              bio: "",
+            },
             category: undefined,
             subcategory: undefined,
             level: "beginner",
-            sections: [],
-            // Add other default fields from all steps
+            //course goals
+            outcomes: [],
+            requirements: [],
+            audience: [],
+            customAudience: [],
+            //curriculum
+
+            //media
+            media: {
+              thumbnail: null,
+              promoVideo: null,
+            },
+            //pricing
+            pricing: {
+              model: "free",
+              amount: 0,
+              currency: "USD",
+            },
           };
 
         form.setFieldsValue(values);
-        console.log("Initialized form values:", values);
       } catch (e) {
         console.error("Form initialization failed:", e);
-        form.setFieldsValue({});
+        form.setFieldsValue({
+          //basic info
+          title: "",
+          subtitle: "",
+          instructor: {
+            name: "",
+            bio: "",
+          },
+          category: undefined,
+          subcategory: undefined,
+          level: "beginner",
+          //course goals
+          outcomes: [],
+          requirements: [],
+          audience: [],
+          customAudience: [],
+
+          // curriculum
+        });
       }
     };
 
