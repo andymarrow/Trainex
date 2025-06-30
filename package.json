@@ -5,9 +5,9 @@
 	"type": "module",
 	"scripts": {
 		"dev": "next dev",
-		"generate": "npx prisma generate && ./convert_zod.sh",
-		"migrate": "npx prisma migrate dev && ./convert_zod.sh",
-		"reset": "npx prisma migrate reset && ./convert_zod.sh",
+		"generate": "npx prisma generate && node post-generate.mjs",
+		"migrate": "npx prisma migrate dev && post-generate.mjs",
+		"reset": "npx prisma migrate reset && post-generate.mjs",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
