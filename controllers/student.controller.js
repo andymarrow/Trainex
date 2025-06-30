@@ -12,67 +12,65 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const getWishListController = async (request) => {
-	const { user } = getSession(headers());
+	const session = await getSession(headers());
 
-	if (!isStudent(user)) {
+	if (!session || !session.user || !isStudent(session.user)) {
 		throw new createHttpError.Unauthorized();
 	}
 
-	const wishList = await getWishList(user.id);
+	const wishList = await getWishList(session.user.id);
 
 	return NextResponse.json({ wishList });
 };
 
 // Could be wrong check before applying
 export const addToWishListController = async (request) => {
-	const { user } = getSession(headers());
+	const session = await getSession(headers());
 
-	if (!isStudent(user)) {
+	if (!session || !session.user || !isStudent(session.user)) {
 		throw new createHttpError.Unauthorized();
 	}
 
-	const { courseId } = request.body;
+	const { courseId } = await request.json();
 
 	if (!courseId) {
 		throw new createHttpError.BadRequest("Invalid course id");
 	}
 
-	const wishList = await addToWishList({ userId: user.id, courseId });
+	const wishList = await addToWishList({ userId: session.user.id, courseId });
 
 	return NextResponse.json({ wishList });
 };
 
 export const getEnrolledCoursesController = async (request) => {
-	const { user } = await auth.api.getSession({
-		headers: headers(),
-	});
+	const session = await getSession(headers())
 
-	if (!isStudent(user)) {
+	if (!session || !session.user || !isStudent(session.user)) {
 		throw new createHttpError.Unauthorized();
 	}
 
-	const courses = await getEnrolledCourses(user.id);
+	const courses = await getEnrolledCourses(session.user.id);
 
 	return NextResponse.json({ courses });
 };
 
 export const getPaymentHistoryController = async (request) => {
-	const { user } = await auth.api.getSession({
-		headers: headers(),
-	});
+	const session = await getSession(headers())
 
-	const paymentHistory = await getPaymentHistory(user.id);
+	if (!session || !session.user || !isStudent(session.user)) {
+		throw new createHttpError.Unauthorized();
+	}
+
+	const paymentHistory = await getPaymentHistory(session.user.id);
 
 	return NextResponse.json({ paymentHistory });
 };
 
 export const enrollStudentController = async (request, { params }) => {
-	const { user } = await auth.api.getSession({
-		headers: headers(),
-	});
+	const session = await getSession(headers())
 	const { courseId } = params;
 
-	if (!isStudent(user)) {
+	if (!session || !session.user || !isStudent(session.user)) {
 		throw new createHttpError.Unauthorized();
 	}
 
@@ -80,7 +78,7 @@ export const enrollStudentController = async (request, { params }) => {
 		throw new createHttpError.BadRequest("Invalid course id");
 	}
 
-	const enrolledCourse = await enrollStudent({ userId: user.id, courseId });
+	const enrolledCourse = await enrollStudent({ userId: session.user.id, courseId });
 
 	return NextResponse.json({ enrolledCourse });
 };

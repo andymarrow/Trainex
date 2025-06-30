@@ -1,48 +1,50 @@
 "use client";
 
 import React from 'react';
-import { FaNewspaper, FaUser, FaClock, FaArrowRight } from 'react-icons/fa'; // Using a newspaper/blog icon
+import { FaNewspaper, FaUser, FaClock, FaArrowRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import Link from 'next/link'; // Use Next.js Link for navigation
+import Link from 'next/link';
 
-import { latestBlogs } from '@/lib/constants'; // Import your blog data
+import { latestBlogs } from '@/lib/constants';
 
 function LatestBlogs() {
+  const numberOfBlogsToShow = 5;
+  const blogsToShow = latestBlogs.slice(0, numberOfBlogsToShow);
 
-  // Framer Motion variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1, // Small delay between items
+        staggerChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 50 }, // Slide up and fade in
+    hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
-  // Variants for the "View All" button
   const buttonVariants = {
-     hidden: { opacity: 0, y: 30 },
-     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: latestBlogs.length * 0.1 + 0.2 } } // Delay after list items
-  }
-
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut", delay: numberOfBlogsToShow * 0.1 + 0.2 }
+    }
+  };
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
       <div className="max-w-7xl mx-auto">
-
         {/* Section Title */}
         <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: -50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: -50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <p className="flex items-center justify-center text-sm font-semibold text-blue-600 dark:text-cyan-400 uppercase mb-2">
             <FaNewspaper className="h-5 w-5 mr-2" /> Our News & Blogs
@@ -52,79 +54,62 @@ function LatestBlogs() {
           </h2>
         </motion.div>
 
-        {/* Blog Posts List - Using alternating layout */}
+        {/* Blog Grid */}
         <motion.div
-          className="space-y-12 lg:space-y-16" // Vertical space between blog items
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }} // Trigger when a bit of the container is visible
+          viewport={{ once: true, amount: 0.1 }}
         >
-          {latestBlogs.map((blog, index) => (
+          {blogsToShow.map((blog) => (
             <motion.div
               key={blog.id}
-              variants={itemVariants} // Apply animation to each blog item
-              className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center
-                         ${index % 2 === 1 ? 'md:grid-flow-col-dense' : ''}`} // Alternate layout
+              variants={itemVariants}
+              className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col"
             >
               {/* Blog Image */}
-              <div className={`rounded-lg overflow-hidden shadow-lg relative
-                             ${index % 2 === 1 ? 'md:col-start-2' : ''}`}> {/* Image position alternates */}
+              <div className="relative h-48">
                 <img
                   src={blog.imageUrl}
                   alt={blog.title}
-                  className="w-full h-64 sm:h-80 object-cover transition-transform duration-500 ease-in-out hover:scale-105" // Hover scale effect
+                  className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
                 />
-                {/* Optional: Overlay or gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               </div>
 
               {/* Blog Content */}
-              <div className={`flex flex-col justify-center
-                             ${index % 2 === 1 ? 'md:col-start-1 md:row-start-1' : ''}`}> {/* Content position alternates */}
-                {/* Author and Date */}
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  <span className="flex items-center mr-4"><FaUser className="mr-1" /> {blog.author}</span>
+              <div className="p-4 flex flex-col flex-grow">
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  <span className="flex items-center mr-3"><FaUser className="mr-1" /> {blog.author || 'Author Name'}</span>
                   <span className="flex items-center"><FaClock className="mr-1" /> {blog.date}</span>
                 </div>
-
-                {/* Title */}
-                <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-3 leading-tight">
-                  {blog.title}
-                </h3>
-
-                {/* Excerpt */}
-                <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
-                  {blog.excerpt}
-                </p>
-
-                {/* Read More Link */}
-                {/* Using Next.js Link for client-side navigation */}
-                <Link href={`/blog/${blog.slug}`}> {/* Link to the specific blog post page */}
-                    <span className="inline-flex items-center text-blue-600 dark:text-cyan-400 font-semibold hover:text-blue-800 dark:hover:text-cyan-600 transition-colors duration-200 cursor-pointer">
-                      Read More Details <FaArrowRight className="ml-2 text-sm" />
-                    </span>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{blog.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 flex-grow">{blog.excerpt}</p>
+                <Link href={`/blog/${blog.slug}`} passHref>
+                  <span className="mt-4 inline-flex items-center text-blue-600 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 text-sm font-medium cursor-pointer">
+                    Read More <FaArrowRight className="ml-2 text-xs" />
+                  </span>
                 </Link>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* "View All Posts" Button */}
+        {/* View All Button */}
         <motion.div
-           className="mt-16 text-center"
-           variants={buttonVariants}
-           initial="hidden"
-           whileInView="visible"
-           viewport={{ once: true, amount: 0.3 }}
+          className="mt-16 text-center"
+          variants={buttonVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
         >
-          <Link href="/bloglist"> {/* Link to your blog list page */}
-              <span className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400 cursor-pointer">
-                View All Posts →
-              </span>
-           </Link>
+          <Link href="/bloglist" passHref>
+            <span className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400 cursor-pointer">
+              View All Posts →
+            </span>
+          </Link>
         </motion.div>
-
       </div>
     </section>
   );
