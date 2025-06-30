@@ -7,7 +7,7 @@
 		"dev": "next dev",
 		"generate": "npx prisma generate && ./convert_zod.sh",
 		"migrate": "npx prisma migrate dev && ./convert_zod.sh",
-		"reset": "npx prisma migrate reset",
+		"reset": "npx prisma migrate reset && ./convert_zod.sh",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
