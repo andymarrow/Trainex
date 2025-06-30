@@ -278,14 +278,14 @@ function Contactus() {
 
                    {/* Submit Button */}
                    <motion.div variants={formFieldVariants}>
-                        <button
+                        <motion.button
                             type="submit"
                             className="inline-flex items-center justify-center w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-md transition-all duration-300 shadow-lg hover:shadow-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400"
                             whileHover={{ scale: 1.02 }} // Slightly smaller scale on hover for a button feel
                             whileTap={{ scale: 0.99 }}
                         >
                             Send Message <FaArrowRight className="ml-2 text-sm" />
-                        </button>
+                        </motion.button>
                     </motion.div>
                 </motion.form>
             </div>

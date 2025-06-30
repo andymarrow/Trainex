@@ -60,64 +60,7 @@ function Header() {
 
 	return (
 		<header className="relative bg-white dark:bg-gray-900 shadow-sm z-50">
-			{/* Top Bar */}
-			<div className="hidden md:flex items-center justify-between px-6 py-2 text-sm bg-gray-100 dark:bg-gray-800 dark:text-gray-300 text-gray-600">
-				<div className="flex items-center space-x-4">
-					<span>+111 (564) 568 25</span>
-					<span>info@trainex.com</span>
-					<span>Mon - Sat: 8:00 - 15:00</span>
-				</div>
-				<div className="flex items-center space-x-4">
-					<span>Follow Us:</span>
-					<a
-						href="#" // Use '#' for placeholder links
-						className="hover:text-blue-600 dark:hover:text-cyan-400"
-						aria-label="Follow on Facebook"
-					>
-						<FaFacebook />
-					</a>
-					<a
-						href="#" // Use '#' for placeholder links
-						className="hover:text-blue-600 dark:hover:text-cyan-400"
-						aria-label="Follow on Twitter"
-					>
-						<FaTwitter />
-					</a>
-					<a
-						href="#" // Use '#' for placeholder links
-						className="hover:text-blue-600 dark:hover:text-cyan-400"
-						aria-label="Follow on LinkedIn"
-					>
-						<FaLinkedin />
-					</a>
-					<a
-						href="#" // Use '#' for placeholder links
-						className="hover:text-blue-600 dark:hover:text-cyan-400"
-						aria-label="Follow on YouTube"
-					>
-						<FaYoutube />
-					</a>
-				</div>
-				{/* Desktop Auth Buttons - Replaced <a> with Link */}
-				<div className="flex items-center space-x-4">
-					<div>
-						<Link
-							href="/sign-up"
-							className="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-3 py-1 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-max text-sm" // Adjusted text-lg to text-sm for top bar
-						>
-							Sign up
-						</Link>
-					</div>
-					<div>
-						<Link
-							href="/sign-in"
-							className="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-3 py-1 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-max text-sm" // Adjusted text-lg to text-sm for top bar
-						>
-							Log in
-						</Link>
-					</div>
-				</div>
-			</div>
+			
 
 			{/* Main Header Content */}
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20 md:h-24">
@@ -182,12 +125,7 @@ function Header() {
 				{/* Desktop Right Side Icons & Button */}
 				<div className="hidden md:flex items-center space-x-6 lg:space-x-8">
 					{/* Icons - Keep as divs/buttons if they trigger modals/actions, wrap in Link if they navigate */}
-					<div className="relative group cursor-pointer">
-						<IoChatbubbleOutline className="h-6 w-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors duration-200" />
-						<span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-500 rounded-full">
-							3
-						</span>
-					</div>
+					
 
 					<div className="relative group cursor-pointer">
 						<IoHeartOutline className="h-6 w-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors duration-200" />
@@ -213,7 +151,7 @@ function Header() {
 						href="/contact"
 						className="ml-6 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
 					>
-						Contact Us →
+						Sign in →
 					</Link>
 				</div>
 
@@ -253,7 +191,7 @@ function Header() {
 									{link.dropdown ? (
 										<>
 											<button
-												className="flex items-center justify-between w-full text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-cyan-400 text-lg font-medium transition-colors duration-200 py-2 text-left"
+												className="flex items-center justify-center gap-2 w-full text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-cyan-400 text-lg font-medium transition-colors duration-200 py-2 text-left"
 												onClick={() =>
 													toggleMobileDropdown(
 														link.name
@@ -332,12 +270,7 @@ function Header() {
 							{/* Keeping them inside nav currently matches your original structure */}
 							<div className="flex items-center justify-center space-x-6 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 w-full">
 								{/* These icons likely trigger actions/modals, not navigation, so keep as divs */}
-								<div className="relative cursor-pointer">
-									<IoChatbubbleOutline className="h-7 w-7 text-gray-700 dark:text-gray-300" />
-									<span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold bg-red-500 rounded-full text-red-100">
-										3
-									</span>
-								</div>
+								
 								<div className="relative cursor-pointer">
 									<IoHeartOutline className="h-7 w-7 text-gray-700 dark:text-gray-300" />
 									<span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold bg-red-500 rounded-full text-red-100">
@@ -370,14 +303,7 @@ function Header() {
 								</Link>
 							</div>
 
-							{/* Mobile Contact Us Button - Changed from <a> to Link */}
-							<Link
-								href="/contact"
-								className="mt-6 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-max text-lg"
-								onClick={toggleMobileMenu} // Close menu on link click
-							>
-								Contact Us →
-							</Link>
+							
 						</nav>
 					</motion.div>
 				)}

@@ -36,7 +36,7 @@ function Hero() {
               Get Certified
             </div>
             <div className="flex items-center dark:text-gray-300 text-gray-700">
-              <FaTimesCircle className="h-6 w-6 text-red-500 mr-2" />
+              <FaCheckCircle className="h-6 w-6 text-green-500 mr-2" />
               Gain Job-ready Skills
             </div>
              <div className="flex items-center dark:text-gray-300 text-gray-700">
