@@ -1,6 +1,6 @@
 "use client"
 import React,{useState} from 'react'
-import SideBar from './_components/SideBar'
+import SideBar from './_components/Sidebar'
 import Header from './_components/Header'
 
 export default function DashboardLayout({children}) {
