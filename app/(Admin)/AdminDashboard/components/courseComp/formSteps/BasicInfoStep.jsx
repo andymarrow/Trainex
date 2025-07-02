@@ -7,9 +7,7 @@ const { TextArea } = Input;
 
 const BasicInfoStep = () => {
   const form = Form.useFormInstance();
-  useEffect(() => {
-    console.log("BasicInfoStep mounted---------", form.getFieldsValue());
-  }, [form]);
+
   return (
     <div className="p-4">
       {/* Course Title */}
@@ -23,7 +21,6 @@ const BasicInfoStep = () => {
       >
         <Input placeholder="Master React in 2023" showCount maxLength={100} />
       </Form.Item>
-
       {/* Subtitle */}
       <Form.Item
         name="subtitle"
@@ -37,10 +34,15 @@ const BasicInfoStep = () => {
           maxLength={120}
         />
       </Form.Item>
-
+      {/* Duration */}
+      <Form.Item
+        name="duration"
+        label="Duration"
+        rules={[{ required: true, message: "Duration is required" }]}
+      >
+        <Input placeholder="e.g. 10 hours" showCount maxLength={100} />
+      </Form.Item>
       <Divider orientation="left">Instructor Information</Divider>
-
-      {/* Instructor Name */}
       <Form.Item
         name={["instructor", "name"]}
         label="Instructor Name"
@@ -48,7 +50,6 @@ const BasicInfoStep = () => {
       >
         <Input placeholder="John Doe" prefix={<UserOutlined />} />
       </Form.Item>
-
       {/* Instructor Bio */}
       <Form.Item
         name={["instructor", "bio"]}
@@ -62,9 +63,7 @@ const BasicInfoStep = () => {
           maxLength={500}
         />
       </Form.Item>
-
       <Divider orientation="left">Course Details</Divider>
-
       {/* Category and Subcategory */}
       <Row gutter={16}>
         <Col span={12}>
@@ -92,7 +91,6 @@ const BasicInfoStep = () => {
           </Form.Item>
         </Col>
       </Row>
-
       {/* Difficulty Level - Checkbox Style */}
       <Form.Item
         name="level"

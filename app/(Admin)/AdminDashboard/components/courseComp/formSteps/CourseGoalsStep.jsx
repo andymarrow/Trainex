@@ -6,9 +6,7 @@ const { TextArea } = Input;
 
 const CourseGoalsStep = () => {
   const form = Form.useFormInstance();
-  useEffect(() => {
-    console.log("BasicInfoStep mounted---------", form.getFieldsValue());
-  }, [form]);
+
   return (
     <div className="p-4">
       {/* Learning Outcomes */}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Input,
@@ -8,29 +8,70 @@ import {
   Select,
   Space,
   Tooltip,
+  Collapse,
+  Form,
 } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
-  PlayCircleOutlined,
-  FileTextOutlined,
-  QuestionCircleOutlined,
-  FileAddOutlined,
+  DownOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
-import QuizEditor from "./QuizEditor";
+import QuizSectionBuilder from "./QuizEditor";
+
+const { Panel } = Collapse;
+
 const lectureTypes = [
-  { value: "video", label: "Video", icon: <PlayCircleOutlined /> },
-  { value: "text", label: "Text", icon: <FileTextOutlined /> },
-  { value: "quiz", label: "Quiz", icon: <QuestionCircleOutlined /> },
-  { value: "assignment", label: "Assignment", icon: <FileAddOutlined /> },
+  { value: "video", label: "Video" },
+  { value: "text", label: "Text" },
+  { value: "quiz", label: "Quiz" },
+  { value: "assignment", label: "Assignment" },
 ];
 
 export default function CurriculumBuilderStep() {
-  const [sections, setSections] = useState([]);
+  const form = Form.useFormInstance();
+  const [sections, setSections] = useState(form.getFieldValue("section") || []);
+  const [activePanels, setActivePanels] = useState({});
+  // const [sections, setSections] = useState([]);
+  // const [activePanels, setActivePanels] = useState({});
+  useEffect(() => {
+    form.setFieldsValue({ section: sections });
+  }, [sections, form]);
+  useEffect(() => {
+    console.log("section--------", sections);
+  }, [sections]);
+  // Toggle panel collapse
+  const togglePanel = (sectionIdx, panelType) => {
+    setActivePanels((prev) => ({
+      ...prev,
+      [sectionIdx]: {
+        ...prev[sectionIdx],
+        [panelType]: !prev[sectionIdx]?.[panelType],
+      },
+    }));
+  };
 
   // Add a new section
   const addSection = () => {
-    setSections([...sections, { title: "", lectures: [] }]);
+    const newSection = {
+      title: "",
+      order: sections.length + 1,
+      chapter: [
+        {
+          title: "Chapter 1",
+          content: [],
+        },
+      ],
+      Exercise: {
+        title: "",
+        description: "",
+        questions: [],
+        order: sections.length + 1,
+        duration: 30,
+      },
+    };
+
+    setSections([...sections, newSection]);
   };
 
   // Remove a section
@@ -45,38 +86,64 @@ export default function CurriculumBuilderStep() {
     setSections(updated);
   };
 
-  // Add lecture to section
-  const addLecture = (sectionIdx, type) => {
+  // Update chapter title
+  const updateChapterTitle = (sectionIdx, chapterIdx, title) => {
     const updated = [...sections];
-    updated[sectionIdx].lectures.push({
+    updated[sectionIdx].chapter[chapterIdx].title = title;
+    setSections(updated);
+  };
+
+  // Add content to chapter
+  const addContent = (sectionIdx, chapterIdx, type) => {
+    const updated = [...sections];
+
+    const newContent = {
       type,
       title: "",
-      duration: "",
+      duration: type === "video" || type === "text" ? "0:00" : "",
       fileUrl: "",
-      quizData: {},
-      status: "draft",
-    });
+      quizData:
+        type === "quiz"
+          ? {
+              multiple_choice: { count: 0, title: "", questions: [] },
+              truefalse: { count: 0, title: "", questions: [] },
+              fillblank: { count: 0, title: "", questions: [] },
+            }
+          : undefined,
+    };
+
+    updated[sectionIdx].chapter[chapterIdx].content.push(newContent);
     setSections(updated);
   };
 
-  // Remove lecture
-  const removeLecture = (sectionIdx, lectureIdx) => {
+  // Remove content
+  const removeContent = (sectionIdx, chapterIdx, contentIdx) => {
     const updated = [...sections];
-    updated[sectionIdx].lectures = updated[sectionIdx].lectures.filter(
-      (_, idx) => idx !== lectureIdx
-    );
+    updated[sectionIdx].chapter[chapterIdx].content = updated[
+      sectionIdx
+    ].chapter[chapterIdx].content.filter((_, idx) => idx !== contentIdx);
     setSections(updated);
   };
 
-  // Update lecture field
-  const updateLecture = (sectionIdx, lectureIdx, field, value) => {
+  // Update content field
+  const updateContent = (sectionIdx, chapterIdx, contentIdx, field, value) => {
     const updated = [...sections];
-    updated[sectionIdx].lectures[lectureIdx][field] = value;
+    updated[sectionIdx].chapter[chapterIdx].content[contentIdx][field] = value;
+    setSections(updated);
+  };
+
+  // Update exercise field
+  const updateExercise = (sectionIdx, field, value) => {
+    const updated = [...sections];
+    updated[sectionIdx].Exercise[field] = value;
     setSections(updated);
   };
 
   return (
     <div>
+      <Form.Item name="section" hidden>
+        <Input />
+      </Form.Item>
       <Button type="dashed" icon={<PlusOutlined />} onClick={addSection} block>
         Add Section
       </Button>
@@ -86,7 +153,7 @@ export default function CurriculumBuilderStep() {
             key={sectionIdx}
             title={
               <>
-                <h1>{`Section${sectionIdx}`}</h1>
+                <h1>{`Section ${section.order}`}</h1>
                 <Input
                   placeholder="Section Title"
                   value={section.title}
@@ -108,119 +175,247 @@ export default function CurriculumBuilderStep() {
             }
           >
             <div className="space-y-4">
-              {section.lectures.map((lecture, lectureIdx) => (
+              {/* Chapters */}
+              {section.chapter.map((chapter, chapterIdx) => (
                 <Card
-                  key={lectureIdx}
-                  size="small"
-                  className="mb-2"
+                  key={chapterIdx}
                   title={
-                    <Space>
-                      {lectureTypes.find((t) => t.value === lecture.type)?.icon}
+                    <div className="flex justify-between items-center">
                       <Input
-                        placeholder="Lecture Title"
-                        value={lecture.title}
+                        placeholder="Chapter Title"
+                        value={chapter.title}
                         onChange={(e) =>
-                          updateLecture(
+                          updateChapterTitle(
                             sectionIdx,
-                            lectureIdx,
-                            "title",
+                            chapterIdx,
                             e.target.value
+                          )
+                        }
+                        style={{ width: 250 }}
+                      />
+                      <Button
+                        icon={
+                          activePanels[sectionIdx]?.[
+                            `chapter-${chapterIdx}`
+                          ] ? (
+                            <UpOutlined />
+                          ) : (
+                            <DownOutlined />
+                          )
+                        }
+                        onClick={() =>
+                          togglePanel(sectionIdx, `chapter-${chapterIdx}`)
+                        }
+                      />
+                    </div>
+                  }
+                >
+                  <Collapse
+                    activeKey={
+                      activePanels[sectionIdx]?.[`chapter-${chapterIdx}`]
+                        ? "1"
+                        : ""
+                    }
+                  >
+                    <Panel key="1">
+                      <div className="space-y-4">
+                        <h3>Content:</h3>
+                        {chapter.content.map((content, contentIdx) => (
+                          <Card
+                            key={contentIdx}
+                            size="small"
+                            className="mb-2"
+                            title={
+                              <Space>
+                                <Input
+                                  placeholder="Content Title"
+                                  value={content.title}
+                                  onChange={(e) =>
+                                    updateContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx,
+                                      "title",
+                                      e.target.value
+                                    )
+                                  }
+                                  style={{ width: 200 }}
+                                />
+                              </Space>
+                            }
+                            extra={
+                              <Tooltip title="Delete Content">
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  danger
+                                  size="small"
+                                  onClick={() =>
+                                    removeContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx
+                                    )
+                                  }
+                                />
+                              </Tooltip>
+                            }
+                          >
+                            <Space
+                              direction="vertical"
+                              style={{ width: "100%" }}
+                            >
+                              {(content.type === "video" ||
+                                content.type === "text" ||
+                                content.type === "assignment") && (
+                                <Upload
+                                  beforeUpload={(file) => {
+                                    updateContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx,
+                                      "fileUrl",
+                                      file.name
+                                    );
+                                    return false;
+                                  }}
+                                  showUploadList={false}
+                                >
+                                  <Button>
+                                    Upload{" "}
+                                    {content.type === "video"
+                                      ? "Video"
+                                      : "File"}
+                                  </Button>
+                                  {content.fileUrl && (
+                                    <span className="ml-2">
+                                      {content.fileUrl}
+                                    </span>
+                                  )}
+                                </Upload>
+                              )}
+                              {content.type === "quiz" && (
+                                <QuizSectionBuilder
+                                  quizData={content.quizData}
+                                  onChange={(data) =>
+                                    updateContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx,
+                                      "quizData",
+                                      data
+                                    )
+                                  }
+                                />
+                              )}
+                              {(content.type === "video" ||
+                                content.type === "text") && (
+                                <Input
+                                  placeholder="Duration (e.g. 5:00)"
+                                  value={content.duration}
+                                  onChange={(e) =>
+                                    updateContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx,
+                                      "duration",
+                                      e.target.value
+                                    )
+                                  }
+                                  style={{ width: 150 }}
+                                />
+                              )}
+                            </Space>
+                          </Card>
+                        ))}
+                        <Select
+                          placeholder="Add Content"
+                          style={{ width: 180 }}
+                          onChange={(type) =>
+                            addContent(sectionIdx, chapterIdx, type)
+                          }
+                          value={undefined}
+                          options={lectureTypes}
+                        />
+                      </div>
+                    </Panel>
+                  </Collapse>
+                </Card>
+              ))}
+
+              {/* Exercise */}
+              <Card
+                title={
+                  <div className="flex justify-between items-center">
+                    <span>Exercise</span>
+                    <Button
+                      icon={
+                        activePanels[sectionIdx]?.["exercise"] ? (
+                          <UpOutlined />
+                        ) : (
+                          <DownOutlined />
+                        )
+                      }
+                      onClick={() => togglePanel(sectionIdx, "exercise")}
+                    />
+                  </div>
+                }
+              >
+                <Collapse
+                  activeKey={activePanels[sectionIdx]?.["exercise"] ? "1" : ""}
+                >
+                  <Panel key="1">
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Input
+                        placeholder="Exercise Title"
+                        value={section.Exercise.title}
+                        onChange={(e) =>
+                          updateExercise(sectionIdx, "title", e.target.value)
+                        }
+                        style={{ width: 300 }}
+                      />
+                      <Input.TextArea
+                        placeholder="Exercise Description"
+                        value={section.Exercise.description}
+                        onChange={(e) =>
+                          updateExercise(
+                            sectionIdx,
+                            "description",
+                            e.target.value
+                          )
+                        }
+                        rows={3}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Duration (minutes)"
+                        value={section.Exercise.duration}
+                        onChange={(e) =>
+                          updateExercise(
+                            sectionIdx,
+                            "duration",
+                            parseInt(e.target.value) || 0
                           )
                         }
                         style={{ width: 200 }}
                       />
-                    </Space>
-                  }
-                  extra={
-                    <Tooltip title="Delete Lecture">
-                      <Button
-                        icon={<DeleteOutlined />}
-                        danger
-                        size="small"
-                        onClick={() => removeLecture(sectionIdx, lectureIdx)}
-                      />
-                    </Tooltip>
-                  }
-                >
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    {(lecture.type === "video" ||
-                      lecture.type === "text" ||
-                      lecture.type === "assignment") && (
                       <Upload
                         beforeUpload={(file) => {
-                          // handle upload logic here
-                          updateLecture(
-                            sectionIdx,
-                            lectureIdx,
-                            "fileUrl",
-                            file.name
-                          );
+                          updateExercise(sectionIdx, "fileUrl", file.name);
                           return false;
                         }}
                         showUploadList={false}
                       >
-                        <Button>
-                          Upload {lecture.type === "video" ? "Video" : "File"}
-                        </Button>
-                        {lecture.fileUrl && (
-                          <span className="ml-2">{lecture.fileUrl}</span>
+                        <Button>Upload Exercise File</Button>
+                        {section.Exercise.fileUrl && (
+                          <span className="ml-2">
+                            {section.Exercise.fileUrl}
+                          </span>
                         )}
                       </Upload>
-                    )}
-                    {lecture.type === "quiz" && (
-                      <QuizEditor
-                        quizData={lecture.quizData}
-                        onChange={(data) =>
-                          updateLecture(
-                            sectionIdx,
-                            lectureIdx,
-                            "quizData",
-                            data
-                          )
-                        }
-                      />
-                    )}
-                    {(lecture.type === "video" || lecture.type === "text") && (
-                      <Input
-                        placeholder="Duration (e.g. 5:00)"
-                        value={lecture.duration}
-                        onChange={(e) =>
-                          updateLecture(
-                            sectionIdx,
-                            lectureIdx,
-                            "duration",
-                            e.target.value
-                          )
-                        }
-                        style={{ width: 150 }}
-                      />
-                    )}
-                    <div>
-                      <span>Status: </span>
-                      <Switch
-                        checked={lecture.status === "published"}
-                        checkedChildren="Published"
-                        unCheckedChildren="Draft"
-                        onChange={(checked) =>
-                          updateLecture(
-                            sectionIdx,
-                            lectureIdx,
-                            "status",
-                            checked ? "published" : "draft"
-                          )
-                        }
-                      />
-                    </div>
-                  </Space>
-                </Card>
-              ))}
-              <Select
-                placeholder="Add Lecture"
-                style={{ width: 180 }}
-                onChange={(type) => addLecture(sectionIdx, type)}
-                value={undefined}
-                options={lectureTypes}
-              />
+                    </Space>
+                  </Panel>
+                </Collapse>
+              </Card>
             </div>
           </Card>
         ))}
