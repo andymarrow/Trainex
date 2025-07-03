@@ -25,7 +25,7 @@ const { Panel } = Collapse;
 
 const lectureTypes = [
   { value: "video", label: "Video" },
-  { value: "text", label: "Text" },
+  { value: "text", label: "Note-Text" },
   { value: "quiz", label: "Quiz" },
   { value: "assignment", label: "Assignment" },
 ];
@@ -352,21 +352,27 @@ export default function CurriculumBuilderStep() {
                                 <>
                                   <Upload
                                     beforeUpload={(file) => {
+                                      const fileInfo = {
+                                        name: file.name,
+                                        type: file.type,
+                                        size: file.size,
+                                        url: URL.createObjectURL(file),
+                                      };
                                       updateContent(
                                         sectionIdx,
                                         chapterIdx,
                                         contentIdx,
-                                        "videoUrl",
-                                        file.name
+                                        "videoFile",
+                                        fileInfo
                                       );
                                       return false;
                                     }}
                                     showUploadList={false}
                                   >
                                     <Button>Upload Video</Button>
-                                    {content.videoUrl && (
+                                    {content.videoFile && (
                                       <span className="ml-2">
-                                        {content.videoUrl}
+                                        {content.videoFile.name}
                                       </span>
                                     )}
                                   </Upload>
@@ -392,21 +398,27 @@ export default function CurriculumBuilderStep() {
                                 <>
                                   <Upload
                                     beforeUpload={(file) => {
+                                      const fileInfo = {
+                                        name: file.name,
+                                        type: file.type,
+                                        size: file.size,
+                                        url: URL.createObjectURL(file),
+                                      };
                                       updateContent(
                                         sectionIdx,
                                         chapterIdx,
                                         contentIdx,
-                                        "fileUrl",
-                                        file.name
+                                        "textFile",
+                                        fileInfo
                                       );
                                       return false;
                                     }}
                                     showUploadList={false}
                                   >
                                     <Button>Upload File</Button>
-                                    {content.fileUrl && (
+                                    {content.textFile && (
                                       <span className="ml-2">
-                                        {content.fileUrl}
+                                        {content.textFile.name}
                                       </span>
                                     )}
                                   </Upload>
@@ -432,21 +444,27 @@ export default function CurriculumBuilderStep() {
                                 <>
                                   <Upload
                                     beforeUpload={(file) => {
+                                      const fileInfo = {
+                                        name: file.name,
+                                        type: file.type,
+                                        size: file.size,
+                                        url: URL.createObjectURL(file),
+                                      };
                                       updateContent(
                                         sectionIdx,
                                         chapterIdx,
                                         contentIdx,
-                                        "fileUrl",
-                                        file.name
+                                        "assignmentFile",
+                                        fileInfo
                                       );
                                       return false;
                                     }}
                                     showUploadList={false}
                                   >
                                     <Button>Upload Assignment File</Button>
-                                    {content.fileUrl && (
+                                    {content.assignmentFile && (
                                       <span className="ml-2">
-                                        {content.fileUrl}
+                                        {content.assignmentFile.name}
                                       </span>
                                     )}
                                   </Upload>
@@ -568,15 +586,21 @@ export default function CurriculumBuilderStep() {
                       </Row>
                       <Upload
                         beforeUpload={(file) => {
-                          updateExercise(sectionIdx, "fileUrl", file.name);
+                          const fileInfo = {
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            url: URL.createObjectURL(file),
+                          };
+                          updateExercise(sectionIdx, "fileInfo", fileInfo);
                           return false;
                         }}
                         showUploadList={false}
                       >
                         <Button>Upload Exercise File</Button>
-                        {section.Exercise.fileUrl && (
+                        {section.Exercise.fileInfo && (
                           <span className="ml-2">
-                            {section.Exercise.fileUrl}
+                            {section.Exercise.fileInfo.name}
                           </span>
                         )}
                       </Upload>

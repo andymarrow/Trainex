@@ -14,10 +14,10 @@ const BasicInfoStep = () => {
       <Form.Item
         name="title"
         label="Course Title"
-        rules={[
-          { required: true, message: "Title is required" },
-          { min: 15, message: "Minimum 15 characters" },
-        ]}
+        // rules={[
+        //   { required: true, message: "Title is required" },
+        //   { min: 15, message: "Minimum 15 characters" },
+        // ]}
       >
         <Input placeholder="Master React in 2023" showCount maxLength={100} />
       </Form.Item>
@@ -25,7 +25,7 @@ const BasicInfoStep = () => {
       <Form.Item
         name="subtitle"
         label="Subtitle"
-        rules={[{ required: true, message: "Subtitle is required" }]}
+        // rules={[{ required: true, message: "Subtitle is required" }]}
       >
         <TextArea
           rows={3}
@@ -38,7 +38,7 @@ const BasicInfoStep = () => {
       <Form.Item
         name="duration"
         label="Duration"
-        rules={[{ required: true, message: "Duration is required" }]}
+        // rules={[{ required: true, message: "Duration is required" }]}
       >
         <Input placeholder="e.g. 10 hours" showCount maxLength={100} />
       </Form.Item>
@@ -46,7 +46,7 @@ const BasicInfoStep = () => {
       <Form.Item
         name={["instructor", "name"]}
         label="Instructor Name"
-        rules={[{ required: true, message: "Instructor name is required" }]}
+        // rules={[{ required: true, message: "Instructor name is required" }]}
       >
         <Input placeholder="John Doe" prefix={<UserOutlined />} />
       </Form.Item>
@@ -54,7 +54,7 @@ const BasicInfoStep = () => {
       <Form.Item
         name={["instructor", "bio"]}
         label="Instructor Bio"
-        rules={[{ required: true, message: "Instructor bio is required" }]}
+        // rules={[{ required: true, message: "Instructor bio is required" }]}
       >
         <TextArea
           rows={3}
@@ -70,7 +70,7 @@ const BasicInfoStep = () => {
           <Form.Item
             name="category"
             label="Category"
-            rules={[{ required: true, message: "Category is required" }]}
+            // rules={[{ required: true, message: "Category is required" }]}
           >
             <Select placeholder="Select category">
               <Option value="web">Web Development</Option>
@@ -95,9 +95,9 @@ const BasicInfoStep = () => {
       <Form.Item
         name="level"
         label="Difficulty Level"
-        rules={[
-          { required: true, message: "Please select a difficulty level" },
-        ]}
+        // rules={[
+        //   { required: true, message: "Please select a difficulty level" },
+        // ]}
       >
         <Checkbox.Group className="w-full">
           <Row gutter={16}>

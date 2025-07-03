@@ -91,26 +91,74 @@ const CourseWizard = ({ initialData, onSubmit }) => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      const allValues = form.getFieldsValue(true); // Get complete form data
-      console.log("Submitting all values:", allValues);
-      await onSubmit(allValues);
-      localStorage.removeItem("courseDraft");
-      setLoading(true);
-      const response = await fetch("/api/courses", {
-        // <-- FIXED
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Data: allValues }),
+      const allValues = form.getFieldsValue(true);
+
+      const formData = new FormData();
+
+      // Append course image
+      if (allValues.media?.courseImage?.originFileObj) {
+        formData.append(
+          "courseImage",
+          allValues.media.courseImage.originFileObj
+        );
+      }
+
+      // Append promo videos
+      (allValues.media?.promoVideos || []).forEach((video, idx) => {
+        if (video?.originFileObj) {
+          formData.append(`promoVideo${idx + 1}`, video.originFileObj);
+        }
       });
 
-      if (!response.ok) throw new Error("Failed to create user");
+      // Append curriculum files (video, text, assignment, exercise)
+      allValues.section?.forEach((section, sIdx) => {
+        section.chapter?.forEach((chapter, cIdx) => {
+          chapter.content?.forEach((content, ctIdx) => {
+            if (content.type === "video" && content.videoFile?.originFileObj) {
+              formData.append(
+                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][videoFile]`,
+                content.videoFile.originFileObj
+              );
+            }
+            if (content.type === "text" && content.textFile?.originFileObj) {
+              formData.append(
+                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][textFile]`,
+                content.textFile.originFileObj
+              );
+            }
+            if (
+              content.type === "assignment" &&
+              content.assignmentFile?.originFileObj
+            ) {
+              formData.append(
+                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][assignmentFile]`,
+                content.assignmentFile.originFileObj
+              );
+            }
+          });
+        });
+        // Exercise file
+        if (section.Exercise?.fileInfo?.originFileObj) {
+          formData.append(
+            `section[${sIdx}][Exercise][fileInfo]`,
+            section.Exercise.fileInfo.originFileObj
+          );
+        }
+      });
 
-      message.success("User created successfully");
+      // Append the rest of the data as JSON
+      formData.append("data", JSON.stringify(allValues));
 
-      setIsModalOpen(false);
+      const response = await fetch("/api/courses", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Failed to create course");
+
+      message.success("Course created successfully");
       form.resetFields();
+      localStorage.removeItem("courseDraft");
     } catch (error) {
       message.error(error.message);
     } finally {
