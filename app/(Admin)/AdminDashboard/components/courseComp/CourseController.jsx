@@ -81,10 +81,10 @@ const CourseController = () => {
     return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  const handleAddCourse = () => {
-    setCurrentCourse(null);
-    setIsModalOpen(true);
-  };
+  // const handleAddCourse = () => {
+  //   setCurrentCourse(null);
+  //   setIsModalOpen(true);
+  // };
 
   const handleEdit = (course) => {
     setCurrentCourse(course);
@@ -173,13 +173,13 @@ const CourseController = () => {
           </Col>
 
           <Col xs={24} sm={24} md={6} lg={10} className="text-right">
-            <Button
+            {/* <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={handleAddCourse}
             >
               Add New Course
-            </Button>
+            </Button> */}
           </Col>
         </Row>
       </div>

@@ -1,13 +1,13 @@
 "use client";
-import CourseController from "@/app/(Admin)/AdminDashboard/components/courseComp/CourseController";
+import CourseForm from "@/app/(Admin)/AdminDashboard/components/courseComp/CourseForm";
 import AdminLayout from "@/app/(Admin)/AdminDashboard/components/layout/Layout";
-//mb-6  margin
+
 export default function CourseManagementPage() {
   return (
     <AdminLayout>
       <div>
-        <h1 className="text-2xl font-bold ">Course Management</h1>
-        <CourseController />
+        <h1 className="text-2xl font-bold">Add Course</h1>
+        <CourseForm />
       </div>
     </AdminLayout>
   );

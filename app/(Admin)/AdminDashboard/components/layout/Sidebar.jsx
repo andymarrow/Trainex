@@ -31,6 +31,11 @@ export default function AdminSidebar() {
       label: "Courses",
     },
     {
+      key: "/AdminDashboard/pages/add-course",
+      icon: <BookOutlined />,
+      label: "AddCourses",
+    },
+    {
       key: "/admin/settings",
       icon: <SettingOutlined />,
       label: "Settings",
