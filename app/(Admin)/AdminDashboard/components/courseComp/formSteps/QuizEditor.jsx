@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Input, Card, Space, Typography, Button as AntdButton } from "antd";
+import {
+  Input,
+  Card,
+  Radio,
+  Space,
+  Typography,
+  Button as AntdButton,
+  InputNumber,
+} from "antd";
 
 const { Title } = Typography;
 
@@ -18,10 +26,8 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
     fillBlank: { count: 0, title: "", questions: [] },
   });
 
-  // Use ref to track if we're initializing
   const initializing = useRef(true);
 
-  // Initialize from parent - runs only once when quizData changes
   useEffect(() => {
     if (quizData && initializing.current) {
       setFormValues({
@@ -37,10 +43,8 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
     }
   }, [quizData]);
 
-  // Track previous form values to prevent unnecessary updates
   const prevFormValues = useRef(formValues);
 
-  // Only call onChange when formValues actually change
   useEffect(() => {
     if (
       !initializing.current &&
@@ -177,12 +181,11 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
               onChange={(e) => handleMetaChange(value, "title", e.target.value)}
               style={{ width: 400 }}
             />
-            <Input
-              type="number"
+            <InputNumber
               placeholder="Number of Questions"
               value={formValues[value].count}
-              onChange={(e) =>
-                handleMetaChange(value, "count", parseInt(e.target.value) || 0)
+              onChange={(val) =>
+                handleMetaChange(value, "count", val !== null ? val : 0)
               }
               style={{ width: 200 }}
               min={0}
@@ -247,7 +250,7 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
 
                           <div style={{ marginTop: 16 }}>
                             <Title level={5}>Correct Answer:</Title>
-                            <select
+                            <Radio.Group
                               value={q.answer}
                               onChange={(e) =>
                                 updateQuestion(
@@ -257,18 +260,14 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
                                   e.target.value
                                 )
                               }
-                              style={{
-                                width: "100%",
-                                padding: 8,
-                                borderRadius: 4,
-                              }}
+                              style={{ width: "100%" }}
                             >
                               {q.options?.map((opt) => (
-                                <option key={opt.label} value={opt.label}>
+                                <Radio key={opt.label} value={opt.label}>
                                   {opt.label} - {opt.text}
-                                </option>
+                                </Radio>
                               ))}
-                            </select>
+                            </Radio.Group>
                           </div>
                         </div>
                       )}
@@ -276,7 +275,7 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
                       {value === "trueFalse" && (
                         <div style={{ marginTop: 16 }}>
                           <Title level={5}>Correct Answer:</Title>
-                          <select
+                          <Radio.Group
                             value={q.answer}
                             onChange={(e) =>
                               updateQuestion(
@@ -286,15 +285,11 @@ export default function QuizSectionBuilder({ quizData, onChange }) {
                                 e.target.value
                               )
                             }
-                            style={{
-                              width: "100%",
-                              padding: 8,
-                              borderRadius: 4,
-                            }}
+                            style={{ width: "100%" }}
                           >
-                            <option value="true">True</option>
-                            <option value="false">False</option>
-                          </select>
+                            <Radio value="true">True</Radio>
+                            <Radio value="false">False</Radio>
+                          </Radio.Group>
                         </div>
                       )}
 

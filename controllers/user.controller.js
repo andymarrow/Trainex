@@ -51,6 +51,7 @@ export const createUserController = async (request) => {
 
   // TODO: validate userData with zod
   const newUser = await createUser(userData);
+
   return NextResponse.json({ user: newUser });
 };
 

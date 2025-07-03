@@ -3,13 +3,15 @@ import {
   Button,
   Input,
   Card,
-  Switch,
   Upload,
   Select,
   Space,
   Tooltip,
   Collapse,
   Form,
+  InputNumber,
+  Row,
+  Col,
 } from "antd";
 import {
   PlusOutlined,
@@ -30,16 +32,39 @@ const lectureTypes = [
 
 export default function CurriculumBuilderStep() {
   const form = Form.useFormInstance();
-  const [sections, setSections] = useState(form.getFieldValue("section") || []);
+  const [sections, setSections] = useState(() => {
+    const formSections = form.getFieldValue("section");
+    return (
+      formSections || [
+        {
+          title: "",
+          order: 1,
+          chapter: [
+            {
+              title: "Chapter 1",
+              order: 1,
+              content: [],
+            },
+          ],
+          Exercise: {
+            title: "",
+            description: "",
+            order: 2,
+            duration: 30,
+            fileUrl: "",
+          },
+        },
+      ]
+    );
+  });
   const [activePanels, setActivePanels] = useState({});
-  // const [sections, setSections] = useState([]);
-  // const [activePanels, setActivePanels] = useState({});
+  const [selectKey, setSelectKey] = useState(0); // Key to force Select re-render
+
+  // Sync sections with form whenever they change
   useEffect(() => {
     form.setFieldsValue({ section: sections });
   }, [sections, form]);
-  useEffect(() => {
-    console.log("section--------", sections);
-  }, [sections]);
+
   // Toggle panel collapse
   const togglePanel = (sectionIdx, panelType) => {
     setActivePanels((prev) => ({
@@ -58,20 +83,46 @@ export default function CurriculumBuilderStep() {
       order: sections.length + 1,
       chapter: [
         {
-          title: "Chapter 1",
+          title: `Chapter 1`,
+          order: 1,
           content: [],
         },
       ],
       Exercise: {
         title: "",
         description: "",
-        questions: [],
-        order: sections.length + 1,
+        order: 2,
         duration: 30,
+        fileUrl: "",
       },
     };
-
     setSections([...sections, newSection]);
+  };
+
+  // Add a new chapter to a section
+  const addChapter = (sectionIdx) => {
+    const updated = [...sections];
+    const newChapter = {
+      title: `Chapter ${updated[sectionIdx].chapter.length + 1}`,
+      order: updated[sectionIdx].chapter.length + 1,
+      content: [],
+    };
+    updated[sectionIdx].chapter.push(newChapter);
+    setSections(updated);
+  };
+
+  // Remove a chapter from a section
+  const removeChapter = (sectionIdx, chapterIdx) => {
+    const updated = [...sections];
+    updated[sectionIdx].chapter = updated[sectionIdx].chapter.filter(
+      (_, idx) => idx !== chapterIdx
+    );
+    // Reorder remaining chapters
+    updated[sectionIdx].chapter.forEach((chap, idx) => {
+      chap.order = idx + 1;
+      chap.title = chap.title.replace(/Chapter \d+/, `Chapter ${idx + 1}`);
+    });
+    setSections(updated);
   };
 
   // Remove a section
@@ -96,24 +147,29 @@ export default function CurriculumBuilderStep() {
   // Add content to chapter
   const addContent = (sectionIdx, chapterIdx, type) => {
     const updated = [...sections];
-
     const newContent = {
       type,
       title: "",
-      duration: type === "video" || type === "text" ? "0:00" : "",
-      fileUrl: "",
-      quizData:
-        type === "quiz"
-          ? {
-              multiple_choice: { count: 0, title: "", questions: [] },
-              truefalse: { count: 0, title: "", questions: [] },
-              fillblank: { count: 0, title: "", questions: [] },
-            }
-          : undefined,
+      duration: type === "quiz" ? "" : "00:00",
     };
+
+    if (type === "video") {
+      newContent.videoUrl = "";
+    } else if (type === "text" || type === "assignment") {
+      newContent.fileUrl = "";
+    }
+
+    if (type === "quiz") {
+      newContent.quizData = {
+        multiple_choice: { count: 0, title: "", questions: [] },
+        truefalse: { count: 0, title: "", questions: [] },
+        fillblank: { count: 0, title: "", questions: [] },
+      };
+    }
 
     updated[sectionIdx].chapter[chapterIdx].content.push(newContent);
     setSections(updated);
+    setSelectKey((prev) => prev + 1); // Force Select to reset
   };
 
   // Remove content
@@ -144,9 +200,11 @@ export default function CurriculumBuilderStep() {
       <Form.Item name="section" hidden>
         <Input />
       </Form.Item>
+
       <Button type="dashed" icon={<PlusOutlined />} onClick={addSection} block>
         Add Section
       </Button>
+
       <div className="mt-4 space-y-8">
         {sections.map((section, sectionIdx) => (
           <Card
@@ -178,7 +236,7 @@ export default function CurriculumBuilderStep() {
               {/* Chapters */}
               {section.chapter.map((chapter, chapterIdx) => (
                 <Card
-                  key={chapterIdx}
+                  key={`${sectionIdx}-${chapterIdx}`}
                   title={
                     <div className="flex justify-between items-center">
                       <Input
@@ -193,20 +251,32 @@ export default function CurriculumBuilderStep() {
                         }
                         style={{ width: 250 }}
                       />
-                      <Button
-                        icon={
-                          activePanels[sectionIdx]?.[
-                            `chapter-${chapterIdx}`
-                          ] ? (
-                            <UpOutlined />
-                          ) : (
-                            <DownOutlined />
-                          )
-                        }
-                        onClick={() =>
-                          togglePanel(sectionIdx, `chapter-${chapterIdx}`)
-                        }
-                      />
+                      <Space>
+                        <Tooltip title="Delete Chapter">
+                          <Button
+                            icon={<DeleteOutlined />}
+                            danger
+                            size="small"
+                            onClick={() =>
+                              removeChapter(sectionIdx, chapterIdx)
+                            }
+                          />
+                        </Tooltip>
+                        <Button
+                          icon={
+                            activePanels[sectionIdx]?.[
+                              `chapter-${chapterIdx}`
+                            ] ? (
+                              <UpOutlined />
+                            ) : (
+                              <DownOutlined />
+                            )
+                          }
+                          onClick={() =>
+                            togglePanel(sectionIdx, `chapter-${chapterIdx}`)
+                          }
+                        />
+                      </Space>
                     </div>
                   }
                 >
@@ -241,6 +311,20 @@ export default function CurriculumBuilderStep() {
                                   }
                                   style={{ width: 200 }}
                                 />
+                                <Input
+                                  placeholder="Duration (e.g. 1:00)"
+                                  value={content.duration}
+                                  onChange={(e) =>
+                                    updateContent(
+                                      sectionIdx,
+                                      chapterIdx,
+                                      contentIdx,
+                                      "duration",
+                                      e.target.value
+                                    )
+                                  }
+                                  style={{ width: 120 }}
+                                />
                               </Space>
                             }
                             extra={
@@ -264,35 +348,126 @@ export default function CurriculumBuilderStep() {
                               direction="vertical"
                               style={{ width: "100%" }}
                             >
-                              {(content.type === "video" ||
-                                content.type === "text" ||
-                                content.type === "assignment") && (
-                                <Upload
-                                  beforeUpload={(file) => {
-                                    updateContent(
-                                      sectionIdx,
-                                      chapterIdx,
-                                      contentIdx,
-                                      "fileUrl",
-                                      file.name
-                                    );
-                                    return false;
-                                  }}
-                                  showUploadList={false}
-                                >
-                                  <Button>
-                                    Upload{" "}
-                                    {content.type === "video"
-                                      ? "Video"
-                                      : "File"}
-                                  </Button>
-                                  {content.fileUrl && (
-                                    <span className="ml-2">
-                                      {content.fileUrl}
-                                    </span>
-                                  )}
-                                </Upload>
+                              {content.type === "video" && (
+                                <>
+                                  <Upload
+                                    beforeUpload={(file) => {
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "videoUrl",
+                                        file.name
+                                      );
+                                      return false;
+                                    }}
+                                    showUploadList={false}
+                                  >
+                                    <Button>Upload Video</Button>
+                                    {content.videoUrl && (
+                                      <span className="ml-2">
+                                        {content.videoUrl}
+                                      </span>
+                                    )}
+                                  </Upload>
+                                  <InputNumber
+                                    min={1}
+                                    max={300}
+                                    value={content.duration}
+                                    onChange={(value) =>
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "duration",
+                                        value
+                                      )
+                                    }
+                                    placeholder="Duration (minutes)"
+                                  />
+                                </>
                               )}
+
+                              {content.type === "text" && (
+                                <>
+                                  <Upload
+                                    beforeUpload={(file) => {
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "fileUrl",
+                                        file.name
+                                      );
+                                      return false;
+                                    }}
+                                    showUploadList={false}
+                                  >
+                                    <Button>Upload File</Button>
+                                    {content.fileUrl && (
+                                      <span className="ml-2">
+                                        {content.fileUrl}
+                                      </span>
+                                    )}
+                                  </Upload>
+                                  <InputNumber
+                                    min={1}
+                                    max={300}
+                                    value={content.duration}
+                                    onChange={(value) =>
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "duration",
+                                        value
+                                      )
+                                    }
+                                    placeholder="Duration (minutes)"
+                                  />
+                                </>
+                              )}
+
+                              {content.type === "assignment" && (
+                                <>
+                                  <Upload
+                                    beforeUpload={(file) => {
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "fileUrl",
+                                        file.name
+                                      );
+                                      return false;
+                                    }}
+                                    showUploadList={false}
+                                  >
+                                    <Button>Upload Assignment File</Button>
+                                    {content.fileUrl && (
+                                      <span className="ml-2">
+                                        {content.fileUrl}
+                                      </span>
+                                    )}
+                                  </Upload>
+                                  <InputNumber
+                                    min={1}
+                                    max={300}
+                                    value={content.duration}
+                                    onChange={(value) =>
+                                      updateContent(
+                                        sectionIdx,
+                                        chapterIdx,
+                                        contentIdx,
+                                        "duration",
+                                        value
+                                      )
+                                    }
+                                    placeholder="Duration (minutes)"
+                                  />
+                                </>
+                              )}
+
                               {content.type === "quiz" && (
                                 <QuizSectionBuilder
                                   quizData={content.quizData}
@@ -307,33 +482,16 @@ export default function CurriculumBuilderStep() {
                                   }
                                 />
                               )}
-                              {(content.type === "video" ||
-                                content.type === "text") && (
-                                <Input
-                                  placeholder="Duration (e.g. 5:00)"
-                                  value={content.duration}
-                                  onChange={(e) =>
-                                    updateContent(
-                                      sectionIdx,
-                                      chapterIdx,
-                                      contentIdx,
-                                      "duration",
-                                      e.target.value
-                                    )
-                                  }
-                                  style={{ width: 150 }}
-                                />
-                              )}
                             </Space>
                           </Card>
                         ))}
                         <Select
+                          key={selectKey} // Force re-render with key change
                           placeholder="Add Content"
                           style={{ width: 180 }}
                           onChange={(type) =>
                             addContent(sectionIdx, chapterIdx, type)
                           }
-                          value={undefined}
                           options={lectureTypes}
                         />
                       </div>
@@ -341,6 +499,16 @@ export default function CurriculumBuilderStep() {
                   </Collapse>
                 </Card>
               ))}
+
+              {/* Add Chapter Button */}
+              <Button
+                type="dashed"
+                icon={<PlusOutlined />}
+                onClick={() => addChapter(sectionIdx)}
+                block
+              >
+                Add Chapter
+              </Button>
 
               {/* Exercise */}
               <Card
@@ -385,19 +553,19 @@ export default function CurriculumBuilderStep() {
                         }
                         rows={3}
                       />
-                      <Input
-                        type="number"
-                        placeholder="Duration (minutes)"
-                        value={section.Exercise.duration}
-                        onChange={(e) =>
-                          updateExercise(
-                            sectionIdx,
-                            "duration",
-                            parseInt(e.target.value) || 0
-                          )
-                        }
-                        style={{ width: 200 }}
-                      />
+                      <Row gutter={16} align="middle">
+                        <Col>Duration (Hours:Minutes):</Col>
+                        <Col>
+                          <InputNumber
+                            min={1}
+                            max={300}
+                            value={section.Exercise.duration}
+                            onChange={(value) =>
+                              updateExercise(sectionIdx, "duration", value)
+                            }
+                          />
+                        </Col>
+                      </Row>
                       <Upload
                         beforeUpload={(file) => {
                           updateExercise(sectionIdx, "fileUrl", file.name);
