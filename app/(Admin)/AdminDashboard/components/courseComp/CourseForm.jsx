@@ -38,51 +38,11 @@ const CourseWizard = ({ initialData, onSubmit }) => {
             audience: [],
             customAudience: [],
             //curriculum
-            section: [
-              // {
-              //   title: "",
-              //   order: "1",
-              //   chapter: [
-              //     {
-              //       title: "",
-              //       content: [
-              //         {
-              //           type: "",
-              //           title: "",
-              //           fileUrl: "",
-              //           duration: "",
-              //           quizData: {
-              //             multiple_choice: {
-              //               count: 0,
-              //               title: "",
-              //               questions: [],
-              //             },
-              //             fillblank: { count: 0, title: "", questions: [] },
-              //             truefalse: { count: 0, title: "", questions: [] },
-              //           },
-              //         },
-              //       ],
-              //     },
-              //   ],
-              //   Exercise: {
-              //     title: "",
-              //     description: "",
-              //     order: "2",
-              //     duration: "",
-              //   },
-              // },
-            ],
+            section: [],
             //media
-            media: {
-              thumbnail: null,
-              promoVideo: null,
-            },
+            media: {},
             //pricing
-            pricing: {
-              model: "free",
-              amount: 0,
-              currency: "USD",
-            },
+            pricing: {},
           };
 
         form.setFieldsValue(values);
@@ -106,25 +66,9 @@ const CourseWizard = ({ initialData, onSubmit }) => {
           customAudience: [],
 
           // curriculum
-          section: [
-            // {
-            //   title: "",
-            //   order: 1,
-            //   chapter: [
-            //     {
-            //       title: "",
-            //       content: [],
-            //     },
-            //   ],
-            //   Exercise: {
-            //     title: "",
-            //     description: "",
-            //     questions: [],
-            //     order: 2,
-            //     duration: 30,
-            //   },
-            // },
-          ],
+          section: [],
+          media: {},
+          pricing: {},
         });
       }
     };
