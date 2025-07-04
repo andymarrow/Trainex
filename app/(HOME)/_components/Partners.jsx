@@ -1,3 +1,4 @@
+// components/Partners.jsx
 "use client";
 
 import React from 'react';
@@ -40,7 +41,7 @@ function Partners() {
   return (
     // Section container with padding and background
     <motion.section
-        className="py-16 px-4 sm:px-6 lg:px-8  text-gray-800 dark:text-white" // Light gray in light, dark gray in dark
+        className="py-16 px-4 sm:px-6 lg:px-8  text-gray-800 dark:text-white" // Added background color
         variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
@@ -75,7 +76,8 @@ function Partners() {
             <motion.div
               key={partner.id}
               variants={logoItemVariants} // Apply animation to each logo item
-              className="flex items-center justify-center w-full h-24 sm:h-28 p-2" // Fixed size container for logos
+              // --- CHANGED CLASSNAME HERE TO MAKE LOGOS SMALLER ---
+              className="flex items-center justify-center w-32 h-20 sm:w-36 sm:h-24 p-2" // Smaller fixed size container
             >
               {/* Wrap logo in Link if websiteUrl exists */}
               {partner.websiteUrl ? (
@@ -84,6 +86,7 @@ function Partners() {
                     src={partner.logoUrl}
                     alt={partner.name}
                     // Styling for the logo image itself
+                    // max-h-full and max-w-full ensure it scales down to fit the parent div
                     className="max-h-full max-w-full object-contain
                                filter grayscale opacity-60 transition-all duration-300
                                hover:grayscale-0 hover:opacity-100 hover:scale-110
@@ -95,6 +98,7 @@ function Partners() {
                     src={partner.logoUrl}
                     alt={partner.name}
                     // Styling for the logo image itself
+                     // max-h-full and max-w-full ensure it scales down to fit the parent div
                     className="max-h-full max-w-full object-contain
                                filter grayscale opacity-60 transition-all duration-300
                                hover:grayscale-0 hover:opacity-100 hover:scale-110

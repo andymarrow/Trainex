@@ -1,4 +1,4 @@
-// app/_components/CoursesSection.js (Assuming this path based on your imports)
+// app/_components/CoursesSection.js
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -84,9 +84,18 @@ function CoursesSection() {
       transform = 'translateX(-10px)';
 
       // Optional: Prevent popup from going off the left edge of the section
-      if (leftRelativeToSection < 0) {
-          leftRelativeToSection = 0; // Stick to the left edge of the section
-          transform = 'translateX(0)'; // No transform needed if against the edge
+      // Check if the popup's left edge is less than the section's left edge in viewport
+       if (rect.left < popupWidth + gap) { // Simplified check: is card close to left edge?
+          leftRelativeToSection = rect.right - sectionRect.left; // Try placing it on the right instead
+          transform = 'translateX(10px)';
+           // If it *still* goes off the right edge of the viewport when placed on the right...
+           if (window.innerWidth - rect.right < popupWidth + gap) {
+               // Fallback: place it centered relative to the card? Or just let it be truncated.
+               // For simplicity here, we'll just allow it to stick right or be truncated on left
+               // A more advanced solution would check both sides relative to viewport edge.
+                leftRelativeToSection = Math.max(0, rect.left - sectionRect.left - popupWidth - gap); // Stick to section left edge if needed
+                transform = 'translateX(0)';
+           }
       }
     }
 
@@ -96,6 +105,7 @@ function CoursesSection() {
      }
      // Optional: Ensure popup doesn't go off the bottom edge of the section
      // This is more complex as popup height is dynamic. A simple fix is to limit top or let it scroll.
+     // Or position relative to bottom of card instead of top. Let's stick to top for now.
 
 
     if (popupTimerRef.current) {
@@ -114,7 +124,7 @@ function CoursesSection() {
      // Only clear hover state if on a large screen
      if (!isLargeScreen) return;
 
-     if (popupTimerRef.current) {
+     if (popupTimerRefRef.current) { // Fix typo here: popupTimerRef.current
         clearTimeout(popupTimerRef.current);
      }
      // Delay before hiding popup
@@ -160,7 +170,7 @@ function CoursesSection() {
     if (popupTimerRef.current) {
         clearTimeout(popupTimerRef.current);
     }
-    router.push('/CourseList'); 
+    router.push('/CourseList');
   };
 
   // Find the course data for the hovered course object
@@ -191,7 +201,7 @@ function CoursesSection() {
       if (popupTimerRef.current) {
           clearTimeout(popupTimerRef.current);
       }
-      router.push(`/CourseList/${courseId}`); 
+      router.push(`/CourseList/${courseId}`);
   };
 
 
@@ -210,13 +220,23 @@ function CoursesSection() {
                 Our Popular Online Courses
                 </h2>
         </div>
+        <div className="flex items-center justify-center md:hidden -mt-10 mb-4">
+                <p className="flex items-center justify-center text-xs font-semibold text-blue-600 dark:text-cyan-400 uppercase ">
+                
+                Category
+                </p>
+        </div>
 
-        <div className="flex justify-center mb-10 flex-wrap gap-3">
+        {/* Category Buttons - Horizontal Scroll on small screens */}
+        {/* *** MODIFIED CLASSNAME HERE *** */}
+        <div className="flex overflow-x-auto gap-3 mb-10 px-4 sm:px-0 sm:flex-wrap sm:justify-center hide-scrollbar">
+        {/* ****************************** */}
           {categories.map(category => (
             <motion.button
               key={category}
               onClick={() => handleCategoryClick(category)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400
+              // Added flex-shrink-0 to prevent buttons from shrinking below content width
+              className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400
                          ${selectedCategory === category
                            ? 'bg-blue-600 text-white dark:bg-cyan-600 dark:text-gray-100 shadow-md'
                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'

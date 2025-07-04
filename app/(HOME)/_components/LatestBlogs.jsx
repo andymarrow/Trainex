@@ -86,7 +86,7 @@ function LatestBlogs() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{blog.title}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300 flex-grow">{blog.excerpt}</p>
-                <Link href={`/blog/${blog.slug}`} passHref>
+                <Link href={`/Blog/${blog.id}`} passHref>
                   <span className="mt-4 inline-flex items-center text-blue-600 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 text-sm font-medium cursor-pointer">
                     Read More <FaArrowRight className="ml-2 text-xs" />
                   </span>
@@ -104,7 +104,7 @@ function LatestBlogs() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <Link href="/bloglist" passHref>
+          <Link href="/Blog" passHref>
             <span className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400 cursor-pointer">
               View All Posts →
             </span>

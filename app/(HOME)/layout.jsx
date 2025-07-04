@@ -7,7 +7,7 @@ function DashboardLayout({ children }) {
   return (
     <div className="">
        <Header/>
-        <div className="flex"> 
+        <div > 
             {/* <Sidebar /> */}
             
             <main className="flex-1">{children}</main> {/* Main content area */}

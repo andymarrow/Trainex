@@ -73,7 +73,7 @@ function TopFilters({ categories, selectedCategory, onCategorySelect, sortOption
                         </motion.button>
                     ))}
                 </div>
-           */}
+           
 
               {/* Sort Dropdown */}
                 <div className="relative flex-shrink-0 z-10" ref={sortButtonRef}> {/* Added z-index */}

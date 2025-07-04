@@ -29,7 +29,7 @@ function Footer() {
 
 
   return (
-    <footer className="bg-white text-gray-700 dark:bg-gray-950 dark:text-gray-400 py-12 relative overflow-hidden">
+    <footer className="bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400 py-12 relative overflow-hidden">
 
          <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-cyan-200 opacity-40 dark:bg-cyan-800 dark:opacity-10 rounded-full filter blur-3xl animate-blob pointer-events-none"></div>
          <div className="absolute top-0 right-1/4 w-64 h-64 bg-cyan-200 opacity-40 dark:bg-cyan-600 dark:opacity-10 rounded-full filter blur-3xl animate-blob animation-delay-2000 pointer-events-none"></div>
