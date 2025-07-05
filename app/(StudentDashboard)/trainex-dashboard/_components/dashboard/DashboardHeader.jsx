@@ -1,42 +1,45 @@
+// app/(StudentDashboard)/trainex-dashboard/_components/dashboard/DashboardHeader.jsx
+'use client';
+
 import React from 'react';
-import { motion } from 'framer-motion';
+// Removed imports for FaBell, FaPlayCircle, NotificationDropdown, PlaylistDropdown
+// Keep other icons/imports if used elsewhere in this component (not shown)
+
+// Note: This component is now just a display for the dashboard title and overall progress.
+// The site-wide header handles notifications, wishlist, etc.
+
+// Add prop types or type checking if using TypeScript
+// interface DashboardHeaderProps {
+//     userName: string;
+//     overallProgress: number;
+//     // notifications and playlistItems props are REMOVED
+// }
+
 
 function DashboardHeader({ userName, overallProgress }) {
-  // Animation variants for the header
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+  // Removed state for dropdowns
+  // Removed handlers for dropdowns
 
-  // Animation variants for the stats line
-  const statsVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { delay: 0.3, duration: 0.5 } },
-  };
 
   return (
-    <motion.div
-      className="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md"
-      initial="hidden"
-      animate="visible"
-      variants={headerVariants}
-    >
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-        Welcome back,{' '}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500">
-          {userName}!
-        </span>
-      </h1>
-      <motion.p
-        className="text-lg text-gray-600 dark:text-gray-300"
-        variants={statsVariants}
-      >
-        Your overall learning progress:{' '}
-        <span className="font-semibold text-blue-600 dark:text-cyan-400">
-          {overallProgress}%
-        </span>
-      </motion.p>
-    </motion.div>
+    // Keep mb-8 for spacing below header
+    <header className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+      {/* Header Content - Simplified */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Welcome, {userName}!
+        </h1>
+        <p className="mt-1 text-gray-600 dark:text-gray-400">
+          Your overall progress: <span className="font-semibold text-blue-600 dark:text-cyan-400">{overallProgress}%</span>
+        </p>
+      </div>
+
+      {/* Icons Container (now empty or contains other non-dropdown dashboard-specific actions if any) */}
+      {/* If no other icons are needed here, this div might be removed */}
+      <div className="mt-4 sm:mt-0 flex items-center space-x-4">
+         {/* Any other dashboard-specific header elements would go here */}
+      </div>
+    </header>
   );
 }
 

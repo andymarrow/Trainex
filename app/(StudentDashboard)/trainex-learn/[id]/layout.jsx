@@ -1,11 +1,11 @@
 import React from 'react'
-import Header from './_components/Header'
+import Header from '../_components/Header'
 
-function TrainexLearnlayout({children}) {
+function TrainexDetailLearnlayout({children}) {
   return (
     <div>
       <div className='p-1'>
-          {/* <Header/> */}
+          <Header/>
       </div>
       <div>
         {children}
@@ -14,4 +14,4 @@ function TrainexLearnlayout({children}) {
   )
 }
 
-export default TrainexLearnlayout
+export default TrainexDetailLearnlayout
