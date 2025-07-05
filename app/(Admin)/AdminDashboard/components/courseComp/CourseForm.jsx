@@ -11,224 +11,237 @@ import PublishingStep from "./formSteps/PublishingStep";
 const { Step } = Steps;
 
 const CourseWizard = ({ initialData, onSubmit }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+	const [currentStep, setCurrentStep] = useState(0);
+	const [form] = Form.useForm();
+	const [loading, setLoading] = useState(false);
 
-  // Initialize form with data (create or edit)
-  // In your CourseWizard component
-  useEffect(() => {
-    const initializeForm = async () => {
-      try {
-        const values = initialData ||
-          JSON.parse(localStorage.getItem("courseDraft")) || {
-            //basic info
-            title: "",
-            subtitle: "",
-            instructor: {
-              name: "",
-              bio: "",
-            },
-            category: undefined,
-            subcategory: undefined,
-            level: "beginner",
-            //course goals
-            outcomes: [],
-            requirements: [],
-            audience: [],
-            customAudience: [],
-            //curriculum
-            section: [],
-            //media
-            media: {},
-            //pricing
-            pricing: {},
-          };
+	// Initialize form with data (create or edit)
+	// In your CourseWizard component
+	useEffect(() => {
+		const initializeForm = async () => {
+			try {
+				const values = initialData ||
+					JSON.parse(localStorage.getItem("courseDraft")) || {
+						//basic info
+						title: "",
+						subtitle: "",
+						instructor: {
+							name: "",
+							bio: "",
+						},
+						category: undefined,
+						subcategory: undefined,
+						level: "beginner",
+						//course goals
+						outcomes: [],
+						requirements: [],
+						audience: [],
+						customAudience: [],
+						//curriculum
+						section: [],
+						//media
+						media: {},
+						//pricing
+						pricing: {},
+					};
 
-        form.setFieldsValue(values);
-      } catch (e) {
-        console.error("Form initialization failed:", e);
-        form.setFieldsValue({
-          //basic info
-          title: "",
-          subtitle: "",
-          instructor: {
-            name: "",
-            bio: "",
-          },
-          category: undefined,
-          subcategory: undefined,
-          level: "beginner",
-          //course goals
-          outcomes: [],
-          requirements: [],
-          audience: [],
-          customAudience: [],
+				form.setFieldsValue(values);
+			} catch (e) {
+				console.error("Form initialization failed:", e);
+				form.setFieldsValue({
+					//basic info
+					title: "",
+					subtitle: "",
+					instructor: {
+						name: "",
+						bio: "",
+					},
+					category: undefined,
+					subcategory: undefined,
+					level: "beginner",
+					//course goals
+					outcomes: [],
+					requirements: [],
+					audience: [],
+					customAudience: [],
 
-          // curriculum
-          section: [],
-          media: {},
-          pricing: {},
-        });
-      }
-    };
+					// curriculum
+					section: [],
+					media: {},
+					pricing: {},
+				});
+			}
+		};
 
-    initializeForm();
-  }, [initialData, form]);
+		initializeForm();
+	}, [initialData, form]);
 
-  // Auto-save draft
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const values = form.getFieldsValue(true); // true to get all nested fields
-      localStorage.setItem("courseDraft", JSON.stringify(values));
-      console.log("Autosaved values:", values);
-    }, 60000);
+	// Auto-save draft
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const values = form.getFieldsValue(true); // true to get all nested fields
+			localStorage.setItem("courseDraft", JSON.stringify(values));
+			console.log("Autosaved values:", values);
+		}, 60000);
 
-    return () => clearInterval(interval);
-  }, [form]);
-  const nextStep = () => setCurrentStep(currentStep + 1);
-  const prevStep = () => setCurrentStep(currentStep - 1);
-  const handleSubmit = async (values) => {
-    setLoading(true);
-    try {
-      const allValues = form.getFieldsValue(true);
+		return () => clearInterval(interval);
+	}, [form]);
+	const nextStep = () => setCurrentStep(currentStep + 1);
+	const prevStep = () => setCurrentStep(currentStep - 1);
+	const handleSubmit = async (values) => {
+		setLoading(true);
+		try {
+			const allValues = form.getFieldsValue(true);
 
-      const formData = new FormData();
+			const formData = new FormData();
 
-      // Append course image
-      if (allValues.media?.courseImage?.originFileObj) {
-        formData.append(
-          "courseImage",
-          allValues.media.courseImage.originFileObj
-        );
-      }
+			// Append course image
+			if (allValues.media?.courseImage?.originFileObj) {
+				formData.append(
+					"courseImage",
+					allValues.media.courseImage.originFileObj
+				);
+			}
 
-      // Append promo videos
-      (allValues.media?.promoVideos || []).forEach((video, idx) => {
-        if (video?.originFileObj) {
-          formData.append(`promoVideo${idx + 1}`, video.originFileObj);
-        }
-      });
+			// Append promo videos
+			(allValues.media?.promoVideos || []).forEach((video, idx) => {
+				if (video?.originFileObj) {
+					formData.append(
+						`promoVideo${idx + 1}`,
+						video.originFileObj
+					);
+				}
+			});
 
-      // Append curriculum files (video, text, assignment, exercise)
-      allValues.section?.forEach((section, sIdx) => {
-        section.chapter?.forEach((chapter, cIdx) => {
-          chapter.content?.forEach((content, ctIdx) => {
-            if (content.type === "video" && content.videoFile?.originFileObj) {
-              formData.append(
-                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][videoFile]`,
-                content.videoFile.originFileObj
-              );
-            }
-            if (content.type === "text" && content.textFile?.originFileObj) {
-              formData.append(
-                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][textFile]`,
-                content.textFile.originFileObj
-              );
-            }
-            if (
-              content.type === "assignment" &&
-              content.assignmentFile?.originFileObj
-            ) {
-              formData.append(
-                `section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][assignmentFile]`,
-                content.assignmentFile.originFileObj
-              );
-            }
-          });
-        });
-        // Exercise file
-        if (section.Exercise?.fileInfo?.originFileObj) {
-          formData.append(
-            `section[${sIdx}][Exercise][fileInfo]`,
-            section.Exercise.fileInfo.originFileObj
-          );
-        }
-      });
+			// Append curriculum files (video, text, assignment, exercise)
+			allValues.section?.forEach((section, sIdx) => {
+				section.chapter?.forEach((chapter, cIdx) => {
+					chapter.content?.forEach((content, ctIdx) => {
+						if (
+							content.type === "video" &&
+							content.videoFile?.originFileObj
+						) {
+							formData.append(
+								`section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][videoFile]`,
+								content.videoFile.originFileObj
+							);
+						}
+						if (
+							content.type === "text" &&
+							content.textFile?.originFileObj
+						) {
+							formData.append(
+								`section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][textFile]`,
+								content.textFile.originFileObj
+							);
+						}
+						if (
+							content.type === "assignment" &&
+							content.assignmentFile?.originFileObj
+						) {
+							formData.append(
+								`section[${sIdx}][chapter][${cIdx}][content][${ctIdx}][assignmentFile]`,
+								content.assignmentFile.originFileObj
+							);
+						}
+					});
+				});
+				// Exercise file
+				if (section.Exercise?.fileInfo?.originFileObj) {
+					formData.append(
+						`section[${sIdx}][Exercise][fileInfo]`,
+						section.Exercise.fileInfo.originFileObj
+					);
+				}
+			});
 
-      // Append the rest of the data as JSON
-      formData.append("data", JSON.stringify(allValues));
+			// Append the rest of the data as JSON
+			formData.append("data", JSON.stringify(allValues));
+			formData.append("thumbnail", allValues.media.courseImage.thumbUrl);
+			// console.log(JSON.stringify(formData));
+			const response = await fetch("/api/courses", {
+				method: "POST",
+				body: formData,
+			});
 
-      const response = await fetch("/api/courses", {
-        method: "POST",
-        body: formData,
-      });
+			if (!response.ok) throw new Error("Failed to create course");
 
-      if (!response.ok) throw new Error("Failed to create course");
+			message.success("Course created successfully");
+			form.resetFields();
+			localStorage.removeItem("courseDraft");
+		} catch (error) {
+			message.error(error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-      message.success("Course created successfully");
-      form.resetFields();
-      localStorage.removeItem("courseDraft");
-    } catch (error) {
-      message.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+	const steps = [
+		{ title: "Basic Info", component: <BasicInfoStep /> },
+		{ title: "Course Goals", component: <CourseGoalsStep /> },
+		{
+			title: "Curriculum",
+			component: (
+				<Form.Item name="section">
+					<CurriculumBuilderStep />
+				</Form.Item>
+			),
+		},
+		{ title: "Media", component: <MediaUploadStep /> },
+		{ title: "Pricing", component: <PricingStep /> },
+		{ title: "Publish", component: <PublishingStep /> },
+	];
 
-  const steps = [
-    { title: "Basic Info", component: <BasicInfoStep /> },
-    { title: "Course Goals", component: <CourseGoalsStep /> },
-    {
-      title: "Curriculum",
-      component: (
-        <Form.Item name="section">
-          <CurriculumBuilderStep />
-        </Form.Item>
-      ),
-    },
-    { title: "Media", component: <MediaUploadStep /> },
-    { title: "Pricing", component: <PricingStep /> },
-    { title: "Publish", component: <PublishingStep /> },
-  ];
+	return (
+		<div className="max-w-6xl mx-auto p-4">
+			<Steps current={currentStep} className="mb-8">
+				{steps.map((item) => (
+					<Step key={item.title} title={item.title} />
+				))}
+			</Steps>
 
-  return (
-    <div className="max-w-6xl mx-auto p-4">
-      <Steps current={currentStep} className="mb-8">
-        {steps.map((item) => (
-          <Step key={item.title} title={item.title} />
-        ))}
-      </Steps>
+			<Form
+				form={form}
+				layout="vertical"
+				onFinish={handleSubmit}
+				className="bg-white p-6 rounded-lg shadow"
+			>
+				{steps[currentStep].component}
 
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow"
-      >
-        {steps[currentStep].component}
+				<div className="flex justify-between mt-8">
+					<Button onClick={prevStep} disabled={currentStep === 0}>
+						Previous
+					</Button>
 
-        <div className="flex justify-between mt-8">
-          <Button onClick={prevStep} disabled={currentStep === 0}>
-            Previous
-          </Button>
-
-          {currentStep < steps.length - 1 ? (
-            <Button
-              type="primary"
-              onClick={() => {
-                form
-                  .validateFields()
-                  .then(nextStep)
-                  .catch(() => message.error("Complete required fields"));
-              }}
-            >
-              Next
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {initialData ? "Update Course" : "Publish Course"}
-            </Button>
-          )}
-        </div>
-      </Form>
-    </div>
-  );
+					{currentStep < steps.length - 1 ? (
+						<Button
+							type="primary"
+							onClick={() => {
+								form.validateFields()
+									.then(nextStep)
+									.catch(() =>
+										message.error(
+											"Complete required fields"
+										)
+									);
+							}}
+						>
+							Next
+						</Button>
+					) : (
+						<Button
+							type="primary"
+							htmlType="submit"
+							loading={loading}
+							className="bg-green-600 hover:bg-green-700"
+						>
+							{initialData ? "Update Course" : "Publish Course"}
+						</Button>
+					)}
+				</div>
+			</Form>
+		</div>
+	);
 };
 
 export default CourseWizard;
