@@ -4,6 +4,7 @@ import {
 	canDeleteCourse,
 	canUpdateCourse,
 } from "@/lib/check-permission-server";
+import { FlatCourseSchema } from "@/prisma/zod/custom-schemas/course";
 import {
 	createCourse,
 	deleteCourse,
@@ -23,17 +24,17 @@ export const listCoursesController = async (request) => {
 };
 
 export const searchCoursesController = async (request) => {
-	const searchParams = request.nextUrl.searchParams
-    const query = searchParams.get('query')
+	const searchParams = request.nextUrl.searchParams;
+	const query = searchParams.get("query");
 
-    const courses = await searchCourses(query);
+	const courses = await searchCourses(query);
 
 	return NextResponse.json({ courses });
 };
 
 export const getCourseController = async (request, { params }) => {
 	const { courseId } = await params;
-	console.log(courseId)
+	console.log(courseId);
 	if (!courseId) {
 		throw new createHttpError.BadRequest("Invalid course id");
 	}
@@ -44,7 +45,25 @@ export const getCourseController = async (request, { params }) => {
 };
 
 export const createCourseController = async (request) => {
-	const { user } = getSession(headers());
+	const { user } = getSession(await headers());
+	const formdata = await request.formData();
+
+	const courseData = {};
+	for (const [key, value] of formdata.entries()) {
+		if (typeof value === "string") {
+			// Check if it's a JSON string field (like your "data" field)
+			try {
+				courseData[key] = JSON.parse(value);
+			} catch {
+				courseData[key] = value;
+			}
+		} else {
+			//TODO: Since it's likely a File store it in a storage or something or change it to base64
+			//TODO: Also handle videos to be uploaded to vimeo
+			courseData[key] = value;
+		}
+	}
+	const result = FlatCourseSchema.safeParse(courseData.data);
 
 	if (!canCreateCourse(user.id)) {
 		throw new createHttpError.Unauthorized(
@@ -52,11 +71,20 @@ export const createCourseController = async (request) => {
 		);
 	}
 
-	const { courseData } = request.body;
-
-	// TODO: generate zod schemas for course and check the course data before passing
-
-	const course = await createCourse(courseData);
+	const course = await createCourse({
+		level: result.data.level,
+		title: result.data.title,
+		description: result.data.description,
+		category: result.data.category,
+		price: result.data.price,
+		tags: result.data.tags || [],
+		duration: result.data.duration,
+		instructorId: result.data.instructorId,
+		roadmap: result.data.requirements,
+		thumbnail: result.data.media.courseImage.url,
+		courseOutcomes: result.data.outcomes,
+		targetAudience: result.data.audience,
+	});
 
 	return NextResponse.json({ course });
 };
