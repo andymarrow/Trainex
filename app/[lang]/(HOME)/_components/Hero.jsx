@@ -4,15 +4,11 @@ import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Image from "next/image";
 
 // IMPORT useTranslation from react-i18next
-import { useTranslation } from "react-i18next";
 
 // REMOVE props title and description from the function signature
 function Hero() {
 
-   // Use useTranslation to get the client-side t() function
-   // Specify the namespaces Hero needs
-   const { t } = useTranslation(['common', 'homepage']);
-
+   
 
   return (
     // Use py-12 or py-16 for more consistent vertical padding on section
@@ -27,20 +23,20 @@ function Hero() {
           <p className="text-sm font-semibold text-blue-600 dark:text-cyan-400 mb-3 flex items-center justify-center lg:justify-start">
              <span className="inline-block h-0.5 w-8 bg-blue-600 dark:bg-cyan-400 mr-2"></span>
              {/* Translate this subtitle too */}
-             {t('homepage:hero.subtitle')} {/* Assuming you add this key */}
+             START YOUR JOURNEY{/* Assuming you add this key */}
           </p>
           {/* Main Title - Responsive font sizes */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6
                        text-gray-900 dark:text-white">
            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-blue-600 dark:from-white dark:to-cyan-400">
                {/* Use t() for the title */}
-               {t('homepage:hero.title')}
+               Unlock Your Potential with Our Courses
            </span>
           </h1>
           {/* Description Paragraph - Responsive text size (optional) */}
           <p className="text-lg dark:text-gray-300 mb-8 text-gray-700">
              {/* Use t() for the description */}
-             {t('homepage:hero.description')}
+             Discover a world of knowledge with our expert-led courses. Whether you're starting a new career or enhancing your skills, we have something for you.
              {/* REMOVE: ------------------- */}
           </p>
 
@@ -48,25 +44,25 @@ function Hero() {
           <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-3 sm:space-y-0 mb-10 justify-center lg:justify-start z-10"> {/* Use lg:justify-start */}
             <div className="flex items-center dark:text-gray-300 text-gray-700">
               <FaCheckCircle className="h-6 w-6 text-green-500 mr-2" />
-               {t('homepage:hero.features.certified')} {/* Assuming keys like these */}
+               Certified Instructors {/* Assuming keys like these */}
             </div>
             <div className="flex items-center dark:text-gray-300 text-gray-700">
               <FaCheckCircle className="h-6 w-6 text-green-500 mr-2" />
-               {t('homepage:hero.features.skills')}
+               Practical Skills
             </div>
              <div className="flex items-center dark:text-gray-300 text-gray-700">
               <FaCheckCircle className="h-6 w-6 text-green-500 mr-2" />
-               {t('homepage:hero.features.life')}
+               Lifetime Access
             </div>
           </div>
 
           {/* Action Buttons - Translate button text */}
           <div className="flex flex-col gap-y-4 sm:flex-row sm:gap-x-4 sm:gap-y-0 justify-center lg:justify-start z-10">
             <button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl text-lg w-full sm:w-auto animate-pulse-slow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-cyan-400">
-              {t('homepage:hero.buttons.get_started')} → {/* Assuming keys like these */}
+              Get Started → {/* Assuming keys like these */}
             </button>
             <button className="bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold px-8 py-4 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl text-lg w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 dark:focus:ring-gray-600">
-               {t('homepage:hero.buttons.our_courses')} →
+               Our Courses →
             </button>
           </div>
         </div>
