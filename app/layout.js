@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
 	title: "E - learning",
 	description: "Building the future",
-	metadataBase: new URL('http://localhost:3000'),
+	// metadataBase: new URL('http://localhost:3000'), // Consider making this locale-aware later
 };
 
 export default function RootLayout({ children }) {
@@ -21,15 +21,14 @@ export default function RootLayout({ children }) {
 		<html lang="en" suppressHydrationWarning>
 			<body className={inter.className}>
 				<Toaster />
-				{/* <Toaster position="top-right" /> */}
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
 					enableSystem
 				>
-                    {/* Your page content will be rendered here */}
+               
 					{children}
-                    {/* Add the ChatBubble component here */}
+                    
                     <ChatBubble />
 				</ThemeProvider>
 			</body>
