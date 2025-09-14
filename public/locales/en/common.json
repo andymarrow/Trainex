@@ -1,8 +1,16 @@
 {
-    "title": "Welcome to our E-learning platform!",
-    "description": "Learn new skills with our expert-led courses.",
+  "hero": {
+    "subtitle": "START YOUR JOURNEY",
+    "title": "Unlock Your Potential with Our Courses",
+    "description": "Discover a world of knowledge with our expert-led courses. Whether you're starting a new career or enhancing your skills, we have something for you.",
+    "features": {
+      "certified": "Certified Instructors",
+      "skills": "Practical Skills",
+      "life": "Lifetime Access"
+    },
     "buttons": {
-        "learn_more": "Learn More",
-        "sign_up": "Sign Up"
+      "get_started": "Get Started",
+      "our_courses": "Our Courses"
     }
+  }
 }

@@ -12,6 +12,7 @@ import LatestBlogs from "./_components/LatestBlogs";
 import Partners from "./_components/Partners";
 
 import initTranslations from "@/i18n"; // Server-side i18n setup
+import TranslationsProvider from "@/components/TranslationsProvider";
 
 // Namespaces needed for *this Server Component* (page.jsx) if it uses t() directly
 const i18nNamespaces = ['common', 'homepage'];
@@ -21,7 +22,7 @@ export default async function Home({ params: { lang } }) {
    // Initialize translations for this server component (page.jsx itself)
    // Keep this if you use t() for server-rendered text *directly in this file*
    // The result `t` here is the SERVER-SIDE translation function.
-   const { t } = await initTranslations({
+   const { t, resources  } = await initTranslations({
        locale: lang,
        namespaces: i18nNamespaces,
    });
@@ -29,7 +30,11 @@ export default async function Home({ params: { lang } }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-
+ <TranslationsProvider
+      namespaces={i18nNamespaces}
+      locale={lang}
+      resources={resources}
+    >
       <main className="flex-grow">
          {/* Render the Client Component Hero */}
          {/* Hero uses useTranslation internally, so DO NOT pass translated props like title, description */}
@@ -52,7 +57,7 @@ export default async function Home({ params: { lang } }) {
         <Partners/>
 
       </main>
-
+</TranslationsProvider>
     </div>
   );
 }
