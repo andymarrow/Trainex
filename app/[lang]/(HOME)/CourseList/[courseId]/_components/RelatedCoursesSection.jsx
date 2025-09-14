@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 
 // Import your sample data and CourseCard
 import { sampleCourses } from '@/lib/constants'; // Adjust path if needed
-import CourseCard from '@/app/(HOME)/_components/CourseCard'; // Adjust path if needed (assuming in components/)
-import HoverPopup from '@/app/(HOME)/_components/HoverPopup'; // Import HoverPopup
+import CourseCard from '../../../_components/CourseCard'; // Adjust path if needed (assuming in components/)
+import HoverPopup from '../../../_components/HoverPopup'; // Import HoverPopup
 
 function RelatedCoursesSection({ currentCourse, limit = 4 }) {
   const router = useRouter();

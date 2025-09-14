@@ -1,4 +1,4 @@
-import CourseListPage from "@/app/(HOME)/CourseList/page";
+import CourseListPage from "@/app/[lang]/(HOME)/CourseList/page";
 
 export default function ExplorePage() {
 	return <CourseListPage />;

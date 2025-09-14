@@ -1,4 +1,4 @@
-import WishlistPage from '@/app/(HOME)/wishlist/page'
+import WishlistPage from '@/app/[lang]/(HOME)/wishlist/page'
 import React from 'react'
 
 

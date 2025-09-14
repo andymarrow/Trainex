@@ -1,4 +1,4 @@
-import CartPage from '@/app/(HOME)/cart/page'
+import CartPage from '@/app/[lang]/(HOME)/cart/page'
 import React from 'react'
 
 function CartPageStudentDashboard() {
