@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
-import { client } from "@/lib/auth-client";
+// CHANGE #1: Import the correct function
+import { requestPasswordReset } from "@/lib/auth-client";
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,18 +26,32 @@ export default function ResetPassword() {
 	const router = useRouter();
 	async function handleSubmit(e) {
 		e.preventDefault();
+
+        // Optional: Add a check to ensure passwords match
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
 		setIsSubmitting(true);
 		setError("");
-		const res = await client.resetPassword({
+		// CHANGE #2: Call the correct function directly
+		const res = await requestPasswordReset({
 			newPassword: password,
 			token:
 				new URLSearchParams(window.location.search).get("token") || "",
 		});
+
+		setIsSubmitting(false);
+
 		if (res.error) {
 			toast.error(res.error.message);
-		}
-		setIsSubmitting(false);
-		router.push("/sign-in");
+            setError(res.error.message); // Also set the local error state if you want
+		} else {
+            // Success!
+            toast.success("Password has been reset successfully!");
+            router.push("/sign-in");
+        }
 	}
 	return (
 		<div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
@@ -51,27 +66,27 @@ export default function ResetPassword() {
 					<form onSubmit={handleSubmit}>
 						<div className="grid w-full items-center gap-2">
 							<div className="flex flex-col space-y-1.5">
-								<Label htmlFor="email">New password</Label>
+								<Label htmlFor="new-password">New password</Label>
 								<PasswordInput
-									id="password"
+									id="new-password"
 									value={password}
 									onChange={(e) =>
 										setPassword(e.target.value)
 									}
-									autoComplete="password"
-									placeholder="Password"
+									autoComplete="new-password"
+									placeholder="New Password"
 								/>
 							</div>
 							<div className="flex flex-col space-y-1.5">
-								<Label htmlFor="email">Confirm password</Label>
+								<Label htmlFor="confirm-password">Confirm password</Label>
 								<PasswordInput
-									id="password"
+									id="confirm-password"
 									value={confirmPassword}
 									onChange={(e) =>
 										setConfirmPassword(e.target.value)
 									}
-									autoComplete="password"
-									placeholder="Password"
+									autoComplete="new-password"
+									placeholder="Confirm Password"
 								/>
 							</div>
 						</div>
@@ -84,7 +99,7 @@ export default function ResetPassword() {
 						<Button
 							className="w-full mt-4"
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isSubmitting || !password || password !== confirmPassword}
 						>
 							{isSubmitting ? "Resetting..." : "Reset password"}
 						</Button>
